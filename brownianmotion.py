@@ -21,11 +21,12 @@ for time in range(1, total_time):
 
     # the position of the particle is checked in a loop if it is within bounds
     while x_position < lower_bound or x_position > upper_bound:
-
+        # if the position of particle goes out of the lower bound it continues from the upper bound as if the box has infinite length
         if x_position < lower_bound:
             out_of_bounds_position = lower_bound - x_position
             x_position = upper_bound - out_of_bounds_position
-        # test and add comments
+        # test
+        # if the position of the particle goes out of the upper bound it continues from the lower bound as if the box has infinite length
         elif x_position > upper_bound:
             out_of_bounds_position = x_position - upper_bound
             x_position = lower_bound + out_of_bounds_position
