@@ -18,3 +18,4 @@ What's wrong with velocity graphs?
 Sigma was supposed to be between -3sigma and 3 sigma but I took absolute value because sigma cannot be negative
 UROP thing
 BME 199 course form
+# TO DO - add normal distribution to the histogram
