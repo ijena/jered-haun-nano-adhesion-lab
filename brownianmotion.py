@@ -14,7 +14,6 @@ import numpy as np
 
 
 def brownian_motion_simulation():
-
     line_length = 1000  # length of box in nanometre
 
     x_position = 500  # initial position of the particle at midpoint of the line which is at the 500 nm
@@ -73,32 +72,45 @@ def brownian_motion_simulation():
         ((inverse_viscous_relaxation_time * temperature) / particle_mass)
         * (1 - math.exp(-2 * inverse_viscous_relaxation_time * time_interval))
     )
+    last_position = 500
+    last_velocity = 0
     for time in range(1, total_time + 1):
+        last_position = x_position
+        last_velocity = velocity
 
+        # calculating random sigma value for gaussian between -3sigma_position and 3sigma_position
+        random_sigma_position = np.random.uniform(
+            -3 * sigma_position, 3 * sigma_position
+        )
         # equation to calculate new position using equation 5 in Hammer English paper
+        # absolute value of random_sigma_position is taken because sigma(standard deviation) cannot be negative
+
         x_position = (
             x_position
             + (c1 * time_interval * velocity)
             + (c2 * pow(time_interval, 2) * K)
-            + gaussian(sigma_position)
+            + gaussian(last_position, np.abs(random_sigma_position))
+        )
+        # calculating random sigma value for gaussian between -3sigma_velocity and 3sigma_velocity
+
+        random_sigma_velocity = np.random.uniform(
+            -3 * sigma_velocity, 3 * sigma_velocity
         )
         # equation to calculate new velocity using equation 5 in Hammer English paper
-        velocity = (c0 * velocity) + (c1 * time_interval * K) + gaussian(sigma_velocity)
-        # the position of the particle is checked in a loop if it is within bounds
-        while x_position < lower_bound or x_position > upper_bound:
-            # if the position of particle goes out of the lower bound it continues from the upper bound as if the box has infinite length
-            if x_position < lower_bound:
-                out_of_bounds_position = lower_bound - x_position
-                x_position = upper_bound - out_of_bounds_position
-            # test
-            # if the position of the particle goes out of the upper bound it continues from the lower bound as if the box has infinite length
-            elif x_position > upper_bound:
-                out_of_bounds_position = x_position - upper_bound
-                x_position = lower_bound + out_of_bounds_position
+        # absolute value of random_sigma_velocity is taken because sigma(standard deviation) cannot be negative
+        velocity = (
+            (c0 * velocity)
+            + (c1 * time_interval * K)
+            + gaussian(last_velocity, np.abs(random_sigma_velocity))
+        )
+        # making sure the particle stays within bounds
+        x_position = x_position % (upper_bound - lower_bound)
         particle_positions.append(x_position)
+        # print(particle_positions)
         particle_velocity.append(velocity)
         particle_time.append(time)
-
+    # print(particle_positions)
+    # print(particle_velocity)
     fig, axs = plt.subplots(2, 2, figsize=(10, 8))
 
     # TO DO - plot it around position = initial_position and velocity = initial_velocity
@@ -138,12 +150,10 @@ def brownian_motion_simulation():
     plt.show()
 
 
-def gaussian(sigma):
-    x = np.random.normal(500, 3 * sigma)  # bounds of x
-    # use gaussian distribution to return random vector
-    return (1 / (sigma * math.sqrt(2 * math.pi))) * math.exp(
-        -0.5 * pow(((x - 0) / sigma), 2)
-    )
+def gaussian(last_position, sigma):
+    # generate a value in a gaussian distribution based on the mean being the previous position/velocity
+    x = np.random.normal(last_position, sigma)
+    return x
 
 
 if __name__ == "__main__":
