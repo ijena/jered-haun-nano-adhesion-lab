@@ -28,6 +28,7 @@ Put an overlay of normal distribution on the histogram
 Find papers of people who have done nanorods, nanospheres simulations
 Make ppt of the plots
 Work on the UROP proposal
+Plot the average position at every time as a line graph on the position vs time graph
 #Goals
 #Working nanosphere simulator which is validated and have plots with it in 3 dimensions
 Hooke's and Spring development of attachment dynamics on the bond surface
