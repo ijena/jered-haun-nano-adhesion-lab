@@ -33,3 +33,7 @@ Plot the average position at every time as a line graph on the position vs time 
 #Working nanosphere simulator which is validated and have plots with it in 3 dimensions
 Hooke's and Spring development of attachment dynamics on the bond surface
 Same things for rods instead of spheres
+
+#3/19/24
+Questions 
+Figure how to get the overlay in the distribution (maybe scale factor?)
