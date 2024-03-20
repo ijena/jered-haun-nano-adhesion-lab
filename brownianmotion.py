@@ -17,7 +17,7 @@ def brownian_motion_simulation():
     line_length = 1000  # length of box in nanometre
 
     x_position = 500  # initial position of the particle at midpoint of the line which is at the 500 nm
-    velocity = 0  # initial velocity of the particle is assumed to be 0 nm/ns
+    velocity = 10  # initial velocity of the particle is assumed to be 0 nm/ns CHANGED
     total_time = 1000  # time of simulation in nanoseconds
     particle_radius = 100  # particle_radius in nanometre
     particle_mass = (1.05 / pow(10, 12)) * (
@@ -35,6 +35,9 @@ def brownian_motion_simulation():
     particle_time = [
         0
     ]  # particle_time is created to store the time passed since start of simulation. 0ns is the start of the simulation
+    average_particle_position = [
+        x_position
+    ]  # create a list to store the average particle position at every instant
     # check unit conversion
     viscosity_liquid = 1 / pow(10, 18)  # viscosity of water in ng/(nm.ns)
     inverse_viscous_relaxation_time = (
@@ -73,7 +76,8 @@ def brownian_motion_simulation():
         * (1 - math.exp(-2 * inverse_viscous_relaxation_time * time_interval))
     )
     last_position = 500
-    last_velocity = 0
+    last_velocity = 10  # CHANGED
+    average_position = 0  # variable to store average position of the particle
     for time in range(1, total_time + 1):
         last_position = x_position
         last_velocity = velocity
@@ -91,11 +95,9 @@ def brownian_motion_simulation():
             + (c2 * pow(time_interval, 2) * K)
             + gaussian(last_position, np.abs(random_sigma_position))
         )
-        # calculating random sigma value for gaussian between -3sigma_velocity and 3sigma_velocity
+        # calculating random sigma value for gaussian between 0 and 3sigma_velocity
 
-        random_sigma_velocity = np.random.uniform(
-            -3 * sigma_velocity, 3 * sigma_velocity
-        )
+        random_sigma_velocity = np.random.uniform(0, 3 * sigma_velocity)
         # equation to calculate new velocity using equation 5 in Hammer English paper
         # absolute value of random_sigma_velocity is taken because sigma(standard deviation) cannot be negative
         velocity = (
