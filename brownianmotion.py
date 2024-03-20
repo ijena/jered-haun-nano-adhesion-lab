@@ -108,6 +108,9 @@ def brownian_motion_simulation():
         # making sure the particle stays within bounds
         x_position = x_position % (upper_bound - lower_bound)
         particle_positions.append(x_position)
+        # calculate average position at that instant and add to the list to plot later
+        average_position = np.mean(particle_positions)
+        average_particle_position.append(average_position)
         # print(particle_positions)
         particle_velocity.append(velocity)
         particle_time.append(time)
@@ -116,10 +119,15 @@ def brownian_motion_simulation():
     fig, axs = plt.subplots(2, 2, figsize=(10, 8))
 
     # TO DO - plot it around position = initial_position and velocity = initial_velocity
-    # Plotting particle position vs time
+    # Plotting particle position vs time and the average position at each instant
+    # Calculate mean and standard deviations for plotting a normal distribution overlay
+    mean_position = np.mean(particle_positions)
+    position_std_dev = np.std(particle_positions)
     axs[0, 0].plot(particle_time, particle_positions, label="Position")
+    axs[0, 0].plot(particle_time, average_particle_position, label="Average position")
     axs[0, 0].set_ylabel("Particle Position (nm)")
     axs[0, 0].set_xlabel("Time passed since start of simulation (ns)")
+    axs[0, 0].legend()
     axs[0, 0].set_title(
         f"Position vs Time for Brownian Motion on a {line_length} nm Line"
     )
