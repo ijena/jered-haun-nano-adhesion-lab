@@ -37,3 +37,7 @@ Same things for rods instead of spheres
 #3/19/24
 Questions 
 Figure how to get the overlay in the distribution (maybe scale factor?)
+Planning to change bins how i get the overlay done 
+Was unable to fix velocity issues but can look into it again
+
+
