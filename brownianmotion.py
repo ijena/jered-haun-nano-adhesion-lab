@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import math
 import random
 import numpy as np
+from scipy.stats import norm
 
 # for plots, plot position vs time and velocity vs time, around x = 0 or v = 0 ( 0 as in initial position which is middle of the box)
 # histograms of velocity and position which should look like a normal distribution
@@ -38,6 +39,9 @@ def brownian_motion_simulation():
     average_particle_position = [
         x_position
     ]  # create a list to store the average particle position at every instant
+    average_particle_velocity = [
+        velocity
+    ]  # create a list to store the average particle velocity at every instant
     # check unit conversion
     viscosity_liquid = 1 / pow(10, 18)  # viscosity of water in ng/(nm.ns)
     inverse_viscous_relaxation_time = (
@@ -78,6 +82,7 @@ def brownian_motion_simulation():
     last_position = 500
     last_velocity = 10  # CHANGED
     average_position = 0  # variable to store average position of the particle
+    average_velocity = 0  # variable to store average velocity of the particle
     for time in range(1, total_time + 1):
         last_position = x_position
         last_velocity = velocity
@@ -114,17 +119,20 @@ def brownian_motion_simulation():
         # print(particle_positions)
         particle_velocity.append(velocity)
         particle_time.append(time)
+        # calculate average velocity at that instant and add to the list to plot later
+        average_velocity = np.mean(particle_velocity)
+        average_particle_velocity.append(average_velocity)
+
     # print(particle_positions)
     # print(particle_velocity)
     fig, axs = plt.subplots(2, 2, figsize=(10, 8))
 
     # TO DO - plot it around position = initial_position and velocity = initial_velocity
     # Plotting particle position vs time and the average position at each instant
-    # Calculate mean and standard deviations for plotting a normal distribution overlay
-    mean_position = np.mean(particle_positions)
-    position_std_dev = np.std(particle_positions)
+
     axs[0, 0].plot(particle_time, particle_positions, label="Position")
     axs[0, 0].plot(particle_time, average_particle_position, label="Average position")
+
     axs[0, 0].set_ylabel("Particle Position (nm)")
     axs[0, 0].set_xlabel("Time passed since start of simulation (ns)")
     axs[0, 0].legend()
@@ -133,21 +141,36 @@ def brownian_motion_simulation():
     )
 
     # Plotting particle velocity vs time
-    axs[0, 1].plot(particle_time, particle_velocity, label="Velocity", color="orange")
+    axs[0, 1].plot(particle_time, average_particle_velocity, label="Average velocity")
+    axs[0, 1].plot(particle_time, particle_velocity, label="Velocity")
     axs[0, 1].set_ylabel("Velocity (nm/s)")
     axs[0, 1].set_xlabel("Time (ns)")
+    axs[0, 1].legend()
     axs[0, 1].set_title(
         f"Velocity vs Time for Brownian Motion on a {line_length} nm Line"
     )
 
-    # TO DO - add normal distribution curve to the histograms
+    # Calculate mean and standard deviations for plotting a normal distribution overlay
+    mean_position = np.mean(particle_positions)
+    position_std_dev = np.std(particle_positions)
+    # Create a normal distribution and plot it
+    position_normal_distribution = norm.pdf(
+        np.linspace(0, 1000), mean_position, position_std_dev
+    )
+
     # Plotting Histogram of particle_positions
-    axs[1, 0].hist(particle_positions, label="Positions")
+    axs[1, 0].hist(particle_positions, bins=50, label="Positions")
+    axs[1, 0].plot(
+        np.linspace(0, 1000),
+        position_normal_distribution,
+        label="Normal distribution overlay",
+    )
     axs[1, 0].set_ylabel("Frequency")
     axs[1, 0].set_xlabel("Position(nm)")
     axs[1, 0].set_title(
         f"Histogram for particle position in Brownian Motion on a {line_length} nm Line"
     )
+    axs[1, 0].legend()
 
     # Plotting Histogram of particle_velocities
     axs[1, 1].hist(particle_velocity, label="Velocity", color="orange")
