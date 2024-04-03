@@ -40,4 +40,12 @@ Figure how to get the overlay in the distribution (maybe scale factor?)
 Planning to change bins how i get the overlay done 
 Was unable to fix velocity issues but can look into it again
 
+#4/3/24
+
+Work on Project Abstract (overview, your role and the impact and results with the detachment curve)
+Try creating your own function for normal distribution histogram overlay instead of using norm.pdf
+Create an absolute position of the particle vs time graph, Slope should be ndt = 1dt d is the diffusion coefficient
+Continue working on the velocity graphs 
+Stokes-einstein equation to get diffusion coefficient for a nanoparticle in water
+
 
