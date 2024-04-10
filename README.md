@@ -48,4 +48,6 @@ Create an absolute position of the particle vs time graph, Slope should be ndt =
 Continue working on the velocity graphs 
 Stokes-einstein equation to get diffusion coefficient for a nanoparticle in water
 
-
+4/10/24
+Which Stokes-Einstein equation to use
+Implemented my own normal distribution but it isnt working correctly
