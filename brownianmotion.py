@@ -94,9 +94,8 @@ def brownian_motion_simulation():
         # equation to calculate new position using equation 5 in Hammer English paper
         # absolute value of random_sigma_position is taken because sigma(standard deviation) cannot be negative
 
-        x_position = (
-            x_position
-            + (c1 * time_interval * velocity)
+        x_position = x_position + abs(
+            (c1 * time_interval * velocity)
             + (c2 * pow(time_interval, 2) * K)
             + gaussian(last_position, np.abs(random_sigma_position))
         )
@@ -125,7 +124,7 @@ def brownian_motion_simulation():
 
     # print(particle_positions)
     # print(particle_velocity)
-    fig, axs = plt.subplots(2, 2, figsize=(10, 8))
+    fig, axs = plt.subplots(3, 3, figsize=(10, 8))
 
     # TO DO - plot it around position = initial_position and velocity = initial_velocity
     # Plotting particle position vs time and the average position at each instant
@@ -153,15 +152,19 @@ def brownian_motion_simulation():
     # Calculate mean and standard deviations for plotting a normal distribution overlay
     mean_position = np.mean(particle_positions)
     position_std_dev = np.std(particle_positions)
-    # Create a normal distribution and plot it
-    position_normal_distribution = norm.pdf(
-        np.linspace(0, 1000), mean_position, position_std_dev
-    )
-
+    # Create a list of all position values
+    position_values = np.linspace(0, 1000)
+    # Call the normal distribution on all position values
+    position_normal_distribution = [
+        normal_distribution(any_value, mean_position, position_std_dev)
+        for any_value in position_values
+    ]
+    # print(position_values)
+    # print(position_normal_distribution)
     # Plotting Histogram of particle_positions
     axs[1, 0].hist(particle_positions, bins=50, label="Positions")
     axs[1, 0].plot(
-        np.linspace(0, 1000),
+        position_values,
         position_normal_distribution,
         label="Normal distribution overlay",
     )
@@ -179,6 +182,23 @@ def brownian_motion_simulation():
     axs[1, 1].set_title(
         f"Histogram for particle velocity in Brownian Motion on a {line_length} nm Line"
     )
+    position_slope = []
+    slope_time = []  # to store all the times the slope is calculated for
+    # loop to calculate slope of the position with time
+    for i in range(0, len(particle_positions) - 1, 100):
+        position_change = particle_positions[i + 1] - particle_positions[i]
+        time_change = particle_time[i + 1] - particle_time[i]
+        slope = position_change / time_change
+        position_slope.append(slope)
+        slope_time.append(particle_time[i])
+    # Plotting the slope of position graph
+    axs[2, 0].scatter(slope_time, position_slope, label="Position Slope")
+    axs[2, 0].set_ylabel("Position Slope (nm/ns)")
+    axs[2, 0].set_xlabel("Time (ns)")
+    axs[2, 0].legend()
+    axs[2, 0].set_title(
+        f"Slope of Position vs Time for Brownian Motion on a {line_length} nm Line"
+    )
 
     plt.show()
 
@@ -187,6 +207,14 @@ def gaussian(last_position, sigma):
     # generate a value in a gaussian distribution based on the mean being the previous position/velocity
     x = np.random.normal(last_position, sigma)
     return x
+
+
+def normal_distribution(current_position, mean, std_dev):
+    return (
+        1
+        / (math.sqrt(2 * math.pi) * std_dev)
+        * math.exp(-0.5 * math.pow(((current_position - mean) / std_dev), 2))
+    )
 
 
 if __name__ == "__main__":
