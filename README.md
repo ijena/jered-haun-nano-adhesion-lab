@@ -51,3 +51,10 @@ Stokes-einstein equation to get diffusion coefficient for a nanoparticle in wate
 4/10/24
 Which Stokes-Einstein equation to use
 Implemented my own normal distribution but it isnt working correctly
+
+Meeting notes
+Take the position values given from the simulation and add up the absolute values of the position at each second and plot a linear graph of that and calculate the slope of that instant
+Fix the slope to work on the analysis graph
+UROP proposal 
+Use stokes-einstein-sutherland equation from wikepedia
+Plot the analysis graph for velocities too but keep changing the mean of the velocities from 10^1 to 10^10
