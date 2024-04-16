@@ -123,14 +123,6 @@ def brownian_motion_simulation():
     # print(particle_positions)
     # print(particle_velocity)
 
-    # finding the sum of absolute positions at each second to analyze the position-time graph
-    particle_position_analysis = [abs(particle_positions[0])]
-    # calculate the cumulative sum of absolute positions and store it in particle_position_analysis
-    for time in range(1, total_time + 1):
-        particle_position_analysis.append(
-            particle_position_analysis[time - 1] + abs(particle_positions[time])
-        )
-
     plt.plot(particle_time, particle_positions, label="Position")
     plt.plot(particle_time, average_particle_position, label="Average position")
 
@@ -139,6 +131,37 @@ def brownian_motion_simulation():
     plt.legend()
     plt.title(f"Position vs Time for Brownian Motion on a {line_length} nm Line")
     plt.show()
+    # finding the sum of absolute positions at each second to analyze the position-time graph
+    particle_position_analysis = [abs(particle_positions[0])]
+    # calculate the cumulative sum of absolute positions and store it in particle_position_analysis
+    for time in range(1, total_time + 1):
+        particle_position_analysis.append(
+            particle_position_analysis[time - 1] + abs(particle_positions[time])
+        )
+    # plotting cumulative sum of absolute positions with respect to time
+    plt.plot(
+        particle_time,
+        particle_position_analysis,
+        label="Cumulative sum of absolute positions",
+    )
+    plt.ylabel("Cumulative position (nm)")
+    plt.xlabel("Time(ns)")
+    plt.legend()
+    plt.title("Cumulative sum of absolute positions at each instance of time")
+    plt.show()
+
+    # calculate slope of the cumulative sum graph at each instant
+    cumulative_sum_position_slope = []
+    for time in range(1, total_time + 1):
+        cumulative_sum_position_slope.append(
+            calculate_slope(
+                time - 1,
+                particle_position_analysis[time - 1],
+                time,
+                particle_position_analysis[time],
+            )
+        )
+    print(cumulative_sum_position_slope)
     # Plotting particle velocity vs time
     plt.plot(particle_time, average_particle_velocity, label="Average velocity")
     plt.plot(particle_time, particle_velocity, label="Velocity")
@@ -220,6 +243,10 @@ def normal_distribution(current_position, mean, std_dev):
         / (math.sqrt(2 * math.pi) * std_dev)
         * math.exp(-0.5 * math.pow(((current_position - mean) / std_dev), 2))
     )
+
+
+def calculate_slope(x1, y1, x2, y2):
+    return (y2 - y1) / (x2 - x1)
 
 
 if __name__ == "__main__":
