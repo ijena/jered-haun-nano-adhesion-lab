@@ -124,8 +124,13 @@ def brownian_motion_simulation():
     # print(particle_velocity)
     fig, axs = plt.subplots(3, 3, figsize=(10, 8))
 
-    # TO DO - plot it around position = initial_position and velocity = initial_velocity
-    # Plotting particle position vs time and the average position at each instant
+    # finding the sum of absolute positions at each second to analyze the position-time graph
+    particle_position_analysis = [abs(particle_positions[0])]
+    # calculate the cumulative sum of absolute positions and store it in particle_position_analysis
+    for time in range(1, total_time + 1):
+        particle_position_analysis.append(
+            particle_position_analysis[time - 1] + abs(particle_positions[time])
+        )
 
     axs[0, 0].plot(particle_time, particle_positions, label="Position")
     axs[0, 0].plot(particle_time, average_particle_position, label="Average position")
@@ -159,8 +164,8 @@ def brownian_motion_simulation():
         normal_distribution(any_value, mean_position, position_std_dev)
         for any_value in position_values
     ]
-    print(position_values)
-    print(position_normal_distribution)
+    # print(position_values)
+    # print(position_normal_distribution)
     # Plotting Histogram of particle_positions
     axs[1, 0].hist(particle_positions, bins=50, label="Positions")
     axs[1, 0].plot(
