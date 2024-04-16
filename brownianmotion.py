@@ -198,9 +198,8 @@ def brownian_motion_simulation():
     )  # list to store all the cumulative particle velocities for mean velocities from 10^1 to 10^10
     for index in range(1, 11):
         velocity = 0  # set initial velocity to 0
-        current_cumulative_velocity = (
-            []
-        )  # list to append cumulative velocity for that  particular mean
+        current_cumulative_velocity = [0]
+        # list to append cumulative velocity for that  particular mean
         for time in range(1, total_time + 1):
             # calculate velocity at every instant for the different means
             last_velocity = velocity
@@ -221,11 +220,26 @@ def brownian_motion_simulation():
                 )
             else:
                 current_cumulative_velocity.append(abs(velocity))
-        print(index)
-        print(current_cumulative_velocity)
+        # print(index)
+        # print(current_cumulative_velocity)
         # save the current_cumulative_velocity for that particular mean velocity in velocity_analysis
         velocity_analysis.append(current_cumulative_velocity)
 
+    # plotting graphs of the velocity analysis
+    # ERROR Watch, anything over this range cannot be plotted, is it because of infinite values?
+    for index in range(0, 8):
+        plt.plot(
+            particle_time,
+            velocity_analysis[index],
+            label=f"Mean = 10 ^{index+1} nm/ns ",
+        )
+    plt.ylabel("Velocity(nm/ns)")
+    plt.xlabel("Time (ns)")
+    plt.title(
+        "Cumulative velocity of particles with different means of the gaussian distribution "
+    )
+    plt.legend()
+    plt.show()
     # Calculate mean and standard deviations for plotting a normal distribution overlay
     mean_position = np.mean(particle_positions)
     position_std_dev = np.std(particle_positions)
