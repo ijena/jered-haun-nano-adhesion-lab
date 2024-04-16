@@ -88,20 +88,18 @@ def brownian_motion_simulation():
         last_velocity = velocity
 
         # calculating random sigma value for gaussian between -3sigma_position and 3sigma_position
-        random_sigma_position = np.random.uniform(
-            -3 * sigma_position, 3 * sigma_position
-        )
+        random_sigma_position = np.random.normal(500, sigma_position)
         # equation to calculate new position using equation 5 in Hammer English paper
         # absolute value of random_sigma_position is taken because sigma(standard deviation) cannot be negative
 
-        x_position = x_position + abs(
+        x_position = x_position + (
             (c1 * time_interval * velocity)
             + (c2 * pow(time_interval, 2) * K)
             + gaussian(last_position, np.abs(random_sigma_position))
         )
         # calculating random sigma value for gaussian between 0 and 3sigma_velocity
 
-        random_sigma_velocity = np.random.uniform(0, 3 * sigma_velocity)
+        random_sigma_velocity = np.random.normal(10**5, sigma_velocity)
         # equation to calculate new velocity using equation 5 in Hammer English paper
         # absolute value of random_sigma_velocity is taken because sigma(standard deviation) cannot be negative
         velocity = (
@@ -152,6 +150,8 @@ def brownian_motion_simulation():
     # Calculate mean and standard deviations for plotting a normal distribution overlay
     mean_position = np.mean(particle_positions)
     position_std_dev = np.std(particle_positions)
+    # print("Mean", mean_position)
+    # print("Standard deviation", position_std_dev)
     # Create a list of all position values
     position_values = np.linspace(0, 1000)
     # Call the normal distribution on all position values
@@ -159,8 +159,8 @@ def brownian_motion_simulation():
         normal_distribution(any_value, mean_position, position_std_dev)
         for any_value in position_values
     ]
-    # print(position_values)
-    # print(position_normal_distribution)
+    print(position_values)
+    print(position_normal_distribution)
     # Plotting Histogram of particle_positions
     axs[1, 0].hist(particle_positions, bins=50, label="Positions")
     axs[1, 0].plot(
@@ -211,7 +211,9 @@ def gaussian(last_position, sigma):
 
 def normal_distribution(current_position, mean, std_dev):
     return (
-        1
+        5
+        * 10**4
+        * 1
         / (math.sqrt(2 * math.pi) * std_dev)
         * math.exp(-0.5 * math.pow(((current_position - mean) / std_dev), 2))
     )
