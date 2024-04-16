@@ -151,7 +151,7 @@ def brownian_motion_simulation():
     plt.show()
 
     # calculate slope of the cumulative sum graph at each instant
-    cumulative_sum_position_slope = []
+    cumulative_sum_position_slope = [0]
     for time in range(1, total_time + 1):
         cumulative_sum_position_slope.append(
             calculate_slope(
@@ -161,16 +161,29 @@ def brownian_motion_simulation():
                 particle_position_analysis[time],
             )
         )
-    print(len(cumulative_sum_position_slope))
-    # print(cumulative_sum_position_slope)
+
+    print(cumulative_sum_position_slope)
     # now we have to check if the slope at each instant = ndt where n is the number of dimensions, d is the diffusion coefficient and t is the time
     # Using Stokes-Einstein-Sutherland equation to find the diffusion coefficient https://en.wikipedia.org/wiki/Einstein_relation_(kinetic_theory)
     diffusion_coefficient = (boltzmann_constant * temperature) / (
         6 * math.pi * viscosity_liquid * particle_radius
     )
-    slope_analysis = []
+    slope_analysis = [0]
     for time in range(1, total_time + 1):
         slope_analysis.append(1 * diffusion_coefficient * time)
+    print(slope_analysis)
+    # Plotting what the slope is and what it should be at every time instant for cumulative sum of particle position
+    plt.plot(
+        particle_time, cumulative_sum_position_slope, label="Actual slope of the graph"
+    )
+    plt.plot(particle_time, slope_analysis, label="Ideal slope of the graph")
+    plt.ylabel("Slope(nm/ns)")
+    plt.xlabel("Time (ns)")
+    plt.title(
+        "Ideal vs Real slope of the graph of cumulative sum of absolute positions of the particle at every instant"
+    )
+    plt.legend()
+    plt.show()
     # Plotting particle velocity vs time
     plt.plot(particle_time, average_particle_velocity, label="Average velocity")
     plt.plot(particle_time, particle_velocity, label="Velocity")
