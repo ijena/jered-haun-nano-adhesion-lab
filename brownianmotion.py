@@ -161,7 +161,16 @@ def brownian_motion_simulation():
                 particle_position_analysis[time],
             )
         )
-    print(cumulative_sum_position_slope)
+    print(len(cumulative_sum_position_slope))
+    # print(cumulative_sum_position_slope)
+    # now we have to check if the slope at each instant = ndt where n is the number of dimensions, d is the diffusion coefficient and t is the time
+    # Using Stokes-Einstein-Sutherland equation to find the diffusion coefficient https://en.wikipedia.org/wiki/Einstein_relation_(kinetic_theory)
+    diffusion_coefficient = (boltzmann_constant * temperature) / (
+        6 * math.pi * viscosity_liquid * particle_radius
+    )
+    slope_analysis = []
+    for time in range(1, total_time + 1):
+        slope_analysis.append(1 * diffusion_coefficient * time)
     # Plotting particle velocity vs time
     plt.plot(particle_time, average_particle_velocity, label="Average velocity")
     plt.plot(particle_time, particle_velocity, label="Velocity")
