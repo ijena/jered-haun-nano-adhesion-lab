@@ -162,7 +162,7 @@ def brownian_motion_simulation():
             )
         )
 
-    print(cumulative_sum_position_slope)
+    # print(cumulative_sum_position_slope)
     # now we have to check if the slope at each instant = ndt where n is the number of dimensions, d is the diffusion coefficient and t is the time
     # Using Stokes-Einstein-Sutherland equation to find the diffusion coefficient https://en.wikipedia.org/wiki/Einstein_relation_(kinetic_theory)
     diffusion_coefficient = (boltzmann_constant * temperature) / (
@@ -171,7 +171,7 @@ def brownian_motion_simulation():
     slope_analysis = [0]
     for time in range(1, total_time + 1):
         slope_analysis.append(1 * diffusion_coefficient * time)
-    print(slope_analysis)
+    # print(slope_analysis)
     # Plotting what the slope is and what it should be at every time instant for cumulative sum of particle position
     plt.plot(
         particle_time, cumulative_sum_position_slope, label="Actual slope of the graph"
@@ -192,6 +192,40 @@ def brownian_motion_simulation():
     plt.legend()
     plt.title(f"Velocity vs Time for Brownian Motion on a {line_length} nm Line")
     plt.show()
+
+    velocity_analysis = (
+        []
+    )  # list to store all the cumulative particle velocities for mean velocities from 10^1 to 10^10
+    for index in range(1, 11):
+        velocity = 0  # set initial velocity to 0
+        current_cumulative_velocity = (
+            []
+        )  # list to append cumulative velocity for that  particular mean
+        for time in range(1, total_time + 1):
+            # calculate velocity at every instant for the different means
+            last_velocity = velocity
+
+            random_sigma_velocity = np.random.normal(10**index, sigma_velocity)
+            # equation to calculate new velocity using equation 5 in Hammer English paper
+            # absolute value of random_sigma_velocity is taken because sigma(standard deviation) cannot be negative
+            velocity = (
+                (c0 * velocity)
+                + (c1 * time_interval * K)
+                + gaussian(last_velocity, np.abs(random_sigma_velocity))
+            )
+            # add the cumulative  absolute velocity of the particle at every instant in current_cumulative_velocity
+            if len(current_cumulative_velocity) != 0:
+                # add the previous cumulative velocity and the current cumulative velocity to find the new cumulative velocity
+                current_cumulative_velocity.append(
+                    current_cumulative_velocity[-1] + abs(velocity)
+                )
+            else:
+                current_cumulative_velocity.append(abs(velocity))
+        print(index)
+        print(current_cumulative_velocity)
+        # save the current_cumulative_velocity for that particular mean velocity in velocity_analysis
+        velocity_analysis.append(current_cumulative_velocity)
+
     # Calculate mean and standard deviations for plotting a normal distribution overlay
     mean_position = np.mean(particle_positions)
     position_std_dev = np.std(particle_positions)
