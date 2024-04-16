@@ -122,7 +122,6 @@ def brownian_motion_simulation():
 
     # print(particle_positions)
     # print(particle_velocity)
-    fig, axs = plt.subplots(3, 3, figsize=(10, 8))
 
     # finding the sum of absolute positions at each second to analyze the position-time graph
     particle_position_analysis = [abs(particle_positions[0])]
@@ -132,26 +131,22 @@ def brownian_motion_simulation():
             particle_position_analysis[time - 1] + abs(particle_positions[time])
         )
 
-    axs[0, 0].plot(particle_time, particle_positions, label="Position")
-    axs[0, 0].plot(particle_time, average_particle_position, label="Average position")
+    plt.plot(particle_time, particle_positions, label="Position")
+    plt.plot(particle_time, average_particle_position, label="Average position")
 
-    axs[0, 0].set_ylabel("Particle Position (nm)")
-    axs[0, 0].set_xlabel("Time passed since start of simulation (ns)")
-    axs[0, 0].legend()
-    axs[0, 0].set_title(
-        f"Position vs Time for Brownian Motion on a {line_length} nm Line"
-    )
-
+    plt.ylabel("Particle Position (nm)")
+    plt.xlabel("Time passed since start of simulation (ns)")
+    plt.legend()
+    plt.title(f"Position vs Time for Brownian Motion on a {line_length} nm Line")
+    plt.show()
     # Plotting particle velocity vs time
-    axs[0, 1].plot(particle_time, average_particle_velocity, label="Average velocity")
-    axs[0, 1].plot(particle_time, particle_velocity, label="Velocity")
-    axs[0, 1].set_ylabel("Velocity (nm/s)")
-    axs[0, 1].set_xlabel("Time (ns)")
-    axs[0, 1].legend()
-    axs[0, 1].set_title(
-        f"Velocity vs Time for Brownian Motion on a {line_length} nm Line"
-    )
-
+    plt.plot(particle_time, average_particle_velocity, label="Average velocity")
+    plt.plot(particle_time, particle_velocity, label="Velocity")
+    plt.ylabel("Velocity (nm/s)")
+    plt.xlabel("Time (ns)")
+    plt.legend()
+    plt.title(f"Velocity vs Time for Brownian Motion on a {line_length} nm Line")
+    plt.show()
     # Calculate mean and standard deviations for plotting a normal distribution overlay
     mean_position = np.mean(particle_positions)
     position_std_dev = np.std(particle_positions)
@@ -167,26 +162,29 @@ def brownian_motion_simulation():
     # print(position_values)
     # print(position_normal_distribution)
     # Plotting Histogram of particle_positions
-    axs[1, 0].hist(particle_positions, bins=50, label="Positions")
-    axs[1, 0].plot(
+    plt.hist(particle_positions, bins=50, label="Positions")
+    plt.plot(
         position_values,
         position_normal_distribution,
         label="Normal distribution overlay",
     )
-    axs[1, 0].set_ylabel("Frequency")
-    axs[1, 0].set_xlabel("Position(nm)")
-    axs[1, 0].set_title(
+    plt.ylabel("Frequency")
+    plt.xlabel("Position(nm)")
+    plt.title(
         f"Histogram for particle position in Brownian Motion on a {line_length} nm Line"
     )
-    axs[1, 0].legend()
+    plt.legend()
+    plt.show()
 
     # Plotting Histogram of particle_velocities
-    axs[1, 1].hist(particle_velocity, label="Velocity", color="orange")
-    axs[1, 1].set_ylabel("Frequency")
-    axs[1, 1].set_xlabel("Velocity (nm/s)")
-    axs[1, 1].set_title(
+    plt.hist(particle_velocity, label="Velocity", color="orange")
+    plt.ylabel("Frequency")
+    plt.xlabel("Velocity (nm/s)")
+    plt.title(
         f"Histogram for particle velocity in Brownian Motion on a {line_length} nm Line"
     )
+    plt.legend()
+    plt.show()
     position_slope = []
     slope_time = []  # to store all the times the slope is calculated for
     # loop to calculate slope of the position with time
@@ -197,11 +195,11 @@ def brownian_motion_simulation():
         position_slope.append(slope)
         slope_time.append(particle_time[i])
     # Plotting the slope of position graph
-    axs[2, 0].scatter(slope_time, position_slope, label="Position Slope")
-    axs[2, 0].set_ylabel("Position Slope (nm/ns)")
-    axs[2, 0].set_xlabel("Time (ns)")
-    axs[2, 0].legend()
-    axs[2, 0].set_title(
+    plt.scatter(slope_time, position_slope, label="Position Slope")
+    plt.ylabel("Position Slope (nm/ns)")
+    plt.xlabel("Time (ns)")
+    plt.legend()
+    plt.title(
         f"Slope of Position vs Time for Brownian Motion on a {line_length} nm Line"
     )
 
