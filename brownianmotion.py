@@ -168,15 +168,15 @@ def brownian_motion_simulation():
     diffusion_coefficient = (boltzmann_constant * temperature) / (
         6 * math.pi * viscosity_liquid * particle_radius
     )
-    slope_analysis = [0]
+    position_slope_analysis = [0]
     for time in range(1, total_time + 1):
-        slope_analysis.append(1 * diffusion_coefficient * time)
+        position_slope_analysis.append(1 * diffusion_coefficient * time)
     # print(slope_analysis)
     # Plotting what the slope is and what it should be at every time instant for cumulative sum of particle position
     plt.plot(
         particle_time, cumulative_sum_position_slope, label="Actual slope of the graph"
     )
-    plt.plot(particle_time, slope_analysis, label="Ideal slope of the graph")
+    plt.plot(particle_time, position_slope_analysis, label="Ideal slope of the graph")
     plt.ylabel("Slope(nm/ns)")
     plt.xlabel("Time (ns)")
     plt.title(
@@ -196,9 +196,15 @@ def brownian_motion_simulation():
     velocity_analysis = (
         []
     )  # list to store all the cumulative particle velocities for mean velocities from 10^1 to 10^10
+    cumulative_sum_velocity_slope = (
+        []
+    )  # list to store the slope for all the cumulative sum of absolute velocity graphs
     for index in range(1, 11):
         velocity = 0  # set initial velocity to 0
         current_cumulative_velocity = [0]
+        current_cumulative_velocity_slope = [
+            0
+        ]  # list to store the slope at every instant for a particular mean in the gaussian distribution
         # list to append cumulative velocity for that  particular mean
         for time in range(1, total_time + 1):
             # calculate velocity at every instant for the different means
@@ -212,22 +218,26 @@ def brownian_motion_simulation():
                 + (c1 * time_interval * K)
                 + gaussian(last_velocity, np.abs(random_sigma_velocity))
             )
-            # add the cumulative  absolute velocity of the particle at every instant in current_cumulative_velocity
-            if len(current_cumulative_velocity) != 0:
-                # add the previous cumulative velocity and the current cumulative velocity to find the new cumulative velocity
-                current_cumulative_velocity.append(
-                    current_cumulative_velocity[-1] + abs(velocity)
+            # calculate the slope at that instant of time and add it to the list current_cumulative_velocity_slope
+            current_cumulative_velocity_slope.append(
+                calculate_slope(
+                    time - 1, current_cumulative_velocity[-1], time, abs(velocity)
                 )
-            else:
-                current_cumulative_velocity.append(abs(velocity))
-        # print(index)
-        # print(current_cumulative_velocity)
+            )
+            # add the cumulative  absolute velocity of the particle at every instant in current_cumulative_velocity
+            # add the previous cumulative velocity and the current cumulative velocity to find the new cumulative velocity
+
+            current_cumulative_velocity.append(
+                current_cumulative_velocity[-1] + abs(velocity)
+            )
         # save the current_cumulative_velocity for that particular mean velocity in velocity_analysis
         velocity_analysis.append(current_cumulative_velocity)
+        # print(current_cumulative_velocity_slope)
+        cumulative_sum_velocity_slope.append(current_cumulative_velocity_slope)
 
     # plotting graphs of the velocity analysis
     # ERROR Watch, anything over this range cannot be plotted, is it because of infinite values?
-    for index in range(0, 8):
+    for index in range(0, 5):
         plt.plot(
             particle_time,
             velocity_analysis[index],
@@ -237,6 +247,22 @@ def brownian_motion_simulation():
     plt.xlabel("Time (ns)")
     plt.title(
         "Cumulative velocity of particles with different means of the gaussian distribution "
+    )
+    plt.legend()
+    plt.show()
+
+    # plot the actual and ideal slopes for velocity analysis
+    # TO DO plot ideal slopes for vector analysis
+    for index in range(0, 10):
+        plt.plot(
+            particle_time,
+            cumulative_sum_velocity_slope[index],
+            label=f"Actual slope for mean = 10^{index+1} nm/ns",
+        )
+    plt.ylabel("Values of the slope (nm/ns)")
+    plt.xlabel("Time (ns)")
+    plt.title(
+        "Actual and ideal values of slopes of cumulative absolute velocity distributions"
     )
     plt.legend()
     plt.show()
