@@ -57,4 +57,10 @@ Take the position values given from the simulation and add up the absolute value
 Fix the slope to work on the analysis graph
 UROP proposal 
 Use stokes-einstein-sutherland equation from wikepedia
-Plot the analysis graph for velocities too but keep changing the mean of the velocities from 10^1 to 10^10
+Plot the analysis graph for velocities too but keep changing the mean of the velocities from 10^1 to 10^10 <br>
+
+4/16/24
+Is the slope analysis for velocity also the same formula of Slope = nDt?
+Some values cannot be plotted, is it because of infinite values?
+What is the meeting location
+Continue debugging
