@@ -64,3 +64,14 @@ Is the slope analysis for velocity also the same formula of Slope = nDt?
 Some values cannot be plotted, is it because of infinite values?
 What is the meeting location
 Continue debugging
+
+Meeting notes <br>
+4/17/24 <br>
+t in ndt is temperature <br>
+Use scipy.optimize.curve_fit to calculate slope of the cumualtive position graph <br>
+Change position vs time to a scatter <br>
+Put graphs into slideshow <br>
+Change total time and see if the histograms change <br>
+Change gaussian distribution mean in position and velocity to be the previous position and velocity <br>
+
+
