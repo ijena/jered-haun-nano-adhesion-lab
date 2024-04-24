@@ -179,6 +179,7 @@ def brownian_motion_simulation():
     plt.axhline(
         y=actual_cumulative_absolute_position_slope,
         label="Actual Cumulative Absolute Position Slope",
+        color="red",
     )
     plt.ylabel("Slope(nm/ns)")
     plt.title(
