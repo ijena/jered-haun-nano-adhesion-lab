@@ -311,25 +311,6 @@ def brownian_motion_simulation():
     )
     plt.legend()
     plt.show()
-    position_slope = []
-    slope_time = []  # to store all the times the slope is calculated for
-    # loop to calculate slope of the position with time
-    for i in range(0, len(particle_positions) - 1, 100):
-        position_change = particle_positions[i + 1] - particle_positions[i]
-        time_change = particle_time[i + 1] - particle_time[i]
-        slope = position_change / time_change
-        position_slope.append(slope)
-        slope_time.append(particle_time[i])
-    # Plotting the slope of position graph
-    plt.scatter(slope_time, position_slope, label="Position Slope")
-    plt.ylabel("Position Slope (nm/ns)")
-    plt.xlabel("Time (ns)")
-    plt.legend()
-    plt.title(
-        f"Slope of Position vs Time for Brownian Motion on a {line_length} nm Line"
-    )
-
-    plt.show()
 
 
 def gaussian(last_position, sigma):
