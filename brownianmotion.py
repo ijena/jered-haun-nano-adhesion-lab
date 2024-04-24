@@ -80,7 +80,7 @@ def brownian_motion_simulation():
         * (1 - math.exp(-2 * inverse_viscous_relaxation_time * time_interval))
     )
     last_position = 500
-    last_velocity = 10  # CHANGED
+    last_velocity = 0  # CHANGED
     average_position = 0  # variable to store average position of the particle
     average_velocity = 0  # variable to store average velocity of the particle
     for time in range(1, total_time + 1):
@@ -171,6 +171,9 @@ def brownian_motion_simulation():
     position_slope_analysis = [0]
     for time in range(1, total_time + 1):
         position_slope_analysis.append(1 * diffusion_coefficient * time)
+    print(1 * diffusion_coefficient * temperature)
+    # print("actual", cumulative_sum_position_slope)
+    # print("ideal", position_slope_analysis)
     # print(slope_analysis)
     # Plotting what the slope is and what it should be at every time instant for cumulative sum of particle position
     plt.plot(
