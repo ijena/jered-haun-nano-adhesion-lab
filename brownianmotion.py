@@ -123,8 +123,10 @@ def brownian_motion_simulation():
     # print(particle_positions)
     # print(particle_velocity)
 
-    plt.plot(particle_time, particle_positions, label="Position")
-    plt.plot(particle_time, average_particle_position, label="Average position")
+    plt.scatter(particle_time, particle_positions, label="Position")
+    plt.plot(
+        particle_time, average_particle_position, label="Average position", color="red"
+    )
 
     plt.ylabel("Particle Position (nm)")
     plt.xlabel("Time passed since start of simulation (ns)")
@@ -166,19 +168,19 @@ def brownian_motion_simulation():
     # print("actual", cumulative_sum_position_slope)
     # print("ideal", position_slope_analysis)
     # print(slope_analysis)
-    # Plotting what the slope is and what it should be at every time instant for cumulative sum of particle position
-    plt.plot(
-        particle_time,
-        actual_cumulative_absolute_position_slope,
-        label="Actual slope of the graph",
+
+    # print(actual_cumulative_absolute_position_slope)
+
+    # plotting what the ideal slope
+    plt.axhline(
+        y=ideal_cumulative_absolute_position_slope,
+        label="Ideal Cumulative Absolute Position Slope",
     )
-    plt.plot(
-        particle_time,
-        ideal_cumulative_absolute_position_slope,
-        label="Ideal slope of the graph",
+    plt.axhline(
+        y=actual_cumulative_absolute_position_slope,
+        label="Actual Cumulative Absolute Position Slope",
     )
     plt.ylabel("Slope(nm/ns)")
-    plt.xlabel("Time (ns)")
     plt.title(
         "Ideal vs Real slope of the graph of cumulative sum of absolute positions of the particle at every instant"
     )
@@ -252,7 +254,6 @@ def brownian_motion_simulation():
     plt.show()
 
     # plot the actual and ideal slopes for velocity analysis
-    # TO DO plot ideal slopes for vector analysis
     for index in range(0, 10):
         plt.plot(
             particle_time,
