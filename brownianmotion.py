@@ -3,6 +3,7 @@ import math
 import random
 import numpy as np
 from scipy.stats import norm
+from scipy.optimize import curve_fit  # used to calculate slope
 
 # for plots, plot position vs time and velocity vs time, around x = 0 or v = 0 ( 0 as in initial position which is middle of the box)
 # histograms of velocity and position which should look like a normal distribution
@@ -140,7 +141,7 @@ def brownian_motion_simulation():
         particle_position_analysis.append(
             particle_position_analysis[time - 1] + abs(particle_positions[time])
         )
-    # plotting cumulative sum of absolute positions with respect to time
+    # plotting cumulative sum of absolute positions  with respect to time
     plt.plot(
         particle_time,
         particle_position_analysis,
@@ -152,16 +153,19 @@ def brownian_motion_simulation():
     plt.title("Cumulative sum of absolute positions at each instance of time")
     plt.show()
 
-    # calculate slope of the cumulative sum graph at each instant
+    # calculate slope of the cumulative sum of absolute positions using scipy.optimize.curve_fit
+    # popt are the optimal parameters and pcov is the covariance
+    # linear function is a user defined function that returns y = mx +c
+    popt, pcov = curve_fit(linear_function, particle_time, particle_position_analysis)
+    actual_cumulative_absolute_position_slope = popt[0]
 
     # print(cumulative_sum_position_slope)
-    # now we have to check if the slope at each instant = ndt where n is the number of dimensions, d is the diffusion coefficient and t is the time
+    # now we have to check if the slope = ndt where n is the number of dimensions, d is the diffusion coefficient and t is the emperature
     # Using Stokes-Einstein-Sutherland equation to find the diffusion coefficient https://en.wikipedia.org/wiki/Einstein_relation_(kinetic_theory)
     diffusion_coefficient = (boltzmann_constant * temperature) / (
         6 * math.pi * viscosity_liquid * particle_radius
     )
-    # TO DO calculate actual cumulative position slope
-    actual_cumulative_absolute_position_slope = 0
+
     # Ideal slope = ndt where n is the number of dimensions, d = diffusion coefficient and t = temperature
     ideal_cumulative_absolute_position_slope = 1 * diffusion_coefficient * temperature
     # print(1 * diffusion_coefficient * temperature)
@@ -171,11 +175,12 @@ def brownian_motion_simulation():
 
     # print(actual_cumulative_absolute_position_slope)
 
-    # plotting what the ideal slope
+    # plotting what the ideal slope should be
     plt.axhline(
         y=ideal_cumulative_absolute_position_slope,
         label="Ideal Cumulative Absolute Position Slope",
     )
+    # plotting with the actual slope is
     plt.axhline(
         y=actual_cumulative_absolute_position_slope,
         label="Actual Cumulative Absolute Position Slope",
@@ -345,6 +350,10 @@ def normal_distribution(current_position, mean, std_dev):
 
 def calculate_slope(x1, y1, x2, y2):
     return (y2 - y1) / (x2 - x1)
+
+
+def linear_function(x, m, c):
+    return m * x + c  # y = mx + c
 
 
 if __name__ == "__main__":
