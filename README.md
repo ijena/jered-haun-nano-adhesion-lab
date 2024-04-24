@@ -74,4 +74,8 @@ Put graphs into slideshow <br>
 Change total time and see if the histograms change <br>
 Change gaussian distribution mean in position and velocity to be the previous position and velocity <br>
 
+Questions <br>
+4/23/24 <br>
+Equation to find the ideal slope of the cumulative absolute velocity graphs <br>
+
 
