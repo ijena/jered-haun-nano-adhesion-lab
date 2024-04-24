@@ -151,16 +151,6 @@ def brownian_motion_simulation():
     plt.show()
 
     # calculate slope of the cumulative sum graph at each instant
-    cumulative_sum_position_slope = [0]
-    for time in range(1, total_time + 1):
-        cumulative_sum_position_slope.append(
-            calculate_slope(
-                time - 1,
-                particle_position_analysis[time - 1],
-                time,
-                particle_position_analysis[time],
-            )
-        )
 
     # print(cumulative_sum_position_slope)
     # now we have to check if the slope at each instant = ndt where n is the number of dimensions, d is the diffusion coefficient and t is the time
@@ -168,18 +158,25 @@ def brownian_motion_simulation():
     diffusion_coefficient = (boltzmann_constant * temperature) / (
         6 * math.pi * viscosity_liquid * particle_radius
     )
-    position_slope_analysis = [0]
-    for time in range(1, total_time + 1):
-        position_slope_analysis.append(1 * diffusion_coefficient * time)
-    print(1 * diffusion_coefficient * temperature)
+    # TO DO calculate actual cumulative position slope
+    actual_cumulative_absolute_position_slope = 0
+    # Ideal slope = ndt where n is the number of dimensions, d = diffusion coefficient and t = temperature
+    ideal_cumulative_absolute_position_slope = 1 * diffusion_coefficient * temperature
+    # print(1 * diffusion_coefficient * temperature)
     # print("actual", cumulative_sum_position_slope)
     # print("ideal", position_slope_analysis)
     # print(slope_analysis)
     # Plotting what the slope is and what it should be at every time instant for cumulative sum of particle position
     plt.plot(
-        particle_time, cumulative_sum_position_slope, label="Actual slope of the graph"
+        particle_time,
+        actual_cumulative_absolute_position_slope,
+        label="Actual slope of the graph",
     )
-    plt.plot(particle_time, position_slope_analysis, label="Ideal slope of the graph")
+    plt.plot(
+        particle_time,
+        ideal_cumulative_absolute_position_slope,
+        label="Ideal slope of the graph",
+    )
     plt.ylabel("Slope(nm/ns)")
     plt.xlabel("Time (ns)")
     plt.title(
