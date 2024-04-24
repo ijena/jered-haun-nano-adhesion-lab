@@ -78,4 +78,12 @@ Questions <br>
 4/23/24 <br>
 Equation to find the ideal slope of the cumulative absolute velocity graphs <br>
 
+Meeting Notes 4/24
+
+Implement bivariate normal distribution, pick 2 values from normal distribution and put it into the bivariate normal distribution https://mathworld.wolfram.com/BivariateNormalDistribution.html
+Look into Mersenne Twister algorithm to get random numbers initially
+Cumulative position ideal slope (refer to picture) we are trying to solve for x and t is total time taken and T is temperature so fix ideal slope based on that
+Continue debugging
+
+
 
