@@ -87,8 +87,8 @@ def brownian_motion_simulation():
         last_position = x_position
         last_velocity = velocity
 
-        # calculating random sigma value for gaussian between -3sigma_position and 3sigma_position
-        random_sigma_position = np.random.normal(500, sigma_position)
+        # calculating random sigma value for gaussian with previous position as mean and sigma_position as std dev
+        random_sigma_position = np.random.normal(last_position, sigma_position)
         # equation to calculate new position using equation 5 in Hammer English paper
         # absolute value of random_sigma_position is taken because sigma(standard deviation) cannot be negative
 
@@ -97,9 +97,9 @@ def brownian_motion_simulation():
             + (c2 * pow(time_interval, 2) * K)
             + gaussian(last_position, np.abs(random_sigma_position))
         )
-        # calculating random sigma value for gaussian between 0 and 3sigma_velocity
+        # calculating random sigma value for gaussian using last_velocity as mean and sigma_velocity as standard deviation
 
-        random_sigma_velocity = np.random.normal(10**5, sigma_velocity)
+        random_sigma_velocity = np.random.normal(last_velocity, sigma_velocity)
         # equation to calculate new velocity using equation 5 in Hammer English paper
         # absolute value of random_sigma_velocity is taken because sigma(standard deviation) cannot be negative
         velocity = (
