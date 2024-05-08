@@ -85,5 +85,9 @@ Look into Mersenne Twister algorithm to get random numbers initially
 Cumulative position ideal slope (refer to picture) we are trying to solve for x and t is total time taken and T is temperature so fix ideal slope based on that
 Continue debugging
 
-
+Questions for 5/8
+How exactly is the bivariate normal distribution working since I get 2 values and I am averaging them
+Overflow error for velocity
+How exactly is all the normal distribution stuff working?
+UROP Poster graphs and printing
 
