@@ -4,6 +4,7 @@ import random
 import numpy as np
 from scipy.stats import norm
 from scipy.optimize import curve_fit  # used to calculate slope
+from scipy.stats import multivariate_normal
 
 # for plots, plot position vs time and velocity vs time, around x = 0 or v = 0 ( 0 as in initial position which is middle of the box)
 # histograms of velocity and position which should look like a normal distribution
@@ -88,19 +89,38 @@ def brownian_motion_simulation():
         last_position = x_position
         last_velocity = velocity
 
-        # calculating random sigma value for gaussian with previous position as mean and sigma_position as std dev
-        random_sigma_position = np.random.normal(last_position, sigma_position)
+        # calculating random sigma value for gaussian with previous position as mean and sigma_position as std dev twice for the
+        # bivariate normal distribution
+        random_sigma_position_1 = np.random.normal(last_position, sigma_position)
+        random_sigma_position_2 = np.random.normal(last_position, sigma_position)
         # equation to calculate new position using equation 5 in Hammer English paper
         # absolute value of random_sigma_position is taken because sigma(standard deviation) cannot be negative
 
+        # x_position = x_position + (
+        #     (c1 * time_interval * velocity)
+        #     + (c2 * pow(time_interval, 2) * K)
+        #     + gaussian(last_position, np.abs(random_sigma_position))
+        # )
         x_position = x_position + (
             (c1 * time_interval * velocity)
             + (c2 * pow(time_interval, 2) * K)
-            + gaussian(last_position, np.abs(random_sigma_position))
+            + np.average(
+                np.random.multivariate_normal(
+                    mean=[last_position, last_position],
+                    cov=np.array(
+                        [
+                            [random_sigma_position_1**2, 0],
+                            [0, random_sigma_position_2**2],
+                        ]
+                    ),
+                )
+            )
         )
-        # calculating random sigma value for gaussian using last_velocity as mean and sigma_velocity as standard deviation
-
+        # print(x_position)
+        # calculating random sigma value for gaussian using last_velocity as mean and sigma_velocity as standard deviation twice for bivariate normal distribution
+        # CHANGE TO RANDOM_SIGMA_VELOCITY_1 FOR MULTIVARIATE NORMAL DISTRIBUTION
         random_sigma_velocity = np.random.normal(last_velocity, sigma_velocity)
+        random_sigma_velocity_2 = np.random.normal(last_velocity, sigma_velocity)
         # equation to calculate new velocity using equation 5 in Hammer English paper
         # absolute value of random_sigma_velocity is taken because sigma(standard deviation) cannot be negative
         velocity = (
@@ -108,6 +128,22 @@ def brownian_motion_simulation():
             + (c1 * time_interval * K)
             + gaussian(last_velocity, np.abs(random_sigma_velocity))
         )
+        # overflow error when I use bivariate distribution
+        # velocity = (
+        #     (c0 * velocity)
+        #     + (c1 * time_interval * K)
+        #     + np.average(
+        #         np.random.multivariate_normal(
+        #             mean=[last_velocity, last_velocity],
+        #             cov=np.array(
+        #                 [
+        #                     [random_sigma_velocity_1**2, 0],
+        #                     [0, random_sigma_velocity_2**2],
+        #                 ]
+        #             ),
+        #         )
+        #     )
+        # )
         # making sure the particle stays within bounds
         x_position = x_position % (upper_bound - lower_bound)
         particle_positions.append(x_position)
@@ -165,6 +201,7 @@ def brownian_motion_simulation():
     diffusion_coefficient = (boltzmann_constant * temperature) / (
         6 * math.pi * viscosity_liquid * particle_radius
     )
+    print("Diffusion coefficient", diffusion_coefficient)
 
     # Ideal slope = ndt where n is the number of dimensions, d = diffusion coefficient and t = temperature
     ideal_cumulative_absolute_position_slope = 1 * diffusion_coefficient * temperature
