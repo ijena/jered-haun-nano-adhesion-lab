@@ -20,7 +20,7 @@ def brownian_motion_simulation():
     line_length = 1000  # length of box in nanometre
 
     x_position = 500  # initial position of the particle at midpoint of the line which is at the 500 nm
-    velocity = 10  # initial velocity of the particle is assumed to be 0 nm/ns CHANGED
+    velocity = 0  # initial velocity of the particle is assumed to be 0 nm/ns CHANGED
     total_time = 1000  # time of simulation in nanoseconds
     particle_radius = 100  # particle_radius in nanometre
     particle_mass = (1.05 / pow(10, 12)) * (
@@ -77,17 +77,25 @@ def brownian_motion_simulation():
         )
     )
     # equation to calculate sigma_velocity using velocity 6 in Hammer English paper
+    # sigma_velocity = math.sqrt(
+    #     ((inverse_viscous_relaxation_time * temperature) / particle_mass)
+    #     * (1 - math.exp(-2 * inverse_viscous_relaxation_time * time_interval))
+    # )
     sigma_velocity = math.sqrt(
-        ((inverse_viscous_relaxation_time * temperature) / particle_mass)
-        * (1 - math.exp(-2 * inverse_viscous_relaxation_time * time_interval))
+        (
+            (boltzmann_constant * temperature)
+            * (1 - math.exp(-2 * inverse_viscous_relaxation_time))
+        )
+        / particle_mass
     )
     last_position = 500
     last_velocity = 0  # CHANGED
     average_position = 0  # variable to store average position of the particle
     average_velocity = 0  # variable to store average velocity of the particle
+    print("sigma velocity", sigma_velocity)
     for time in range(1, total_time + 1):
         last_position = x_position
-        last_velocity = velocity
+        # last_velocity = velocity
 
         # calculating random sigma value for gaussian with previous position as mean and sigma_position as std dev twice for the
         # bivariate normal distribution
@@ -124,10 +132,14 @@ def brownian_motion_simulation():
         # equation to calculate new velocity using equation 5 in Hammer English paper
         # absolute value of random_sigma_velocity is taken because sigma(standard deviation) cannot be negative
         velocity = (
-            (c0 * velocity)
+            (c0 * velocity)  # removed prev velocity
             + (c1 * time_interval * K)
-            + gaussian(last_velocity, np.abs(random_sigma_velocity))
+            + np.random.normal(
+                velocity, sigma_velocity
+            )  # changed line from gaussian( #velocity, np.abs(random_sigma_velocity)
         )
+        # updating previous velocity to the new velocity
+
         # overflow error when I use bivariate distribution
         # velocity = (
         #     (c0 * velocity)
@@ -157,9 +169,12 @@ def brownian_motion_simulation():
         average_velocity = np.mean(particle_velocity)
         average_particle_velocity.append(average_velocity)
 
-    # print(particle_positions)
-    # print(particle_velocity)
+        # after appending set velocity to zero
+        velocity = 0
 
+    # print(particle_positions)
+    print(particle_velocity)
+    print("c0 ", c0)
     plt.scatter(particle_time, particle_positions, label="Position")
     plt.plot(
         particle_time, average_particle_position, label="Average position", color="red"
