@@ -91,3 +91,7 @@ Overflow error for velocity <br>
 How exactly is all the normal distribution stuff working? <br>
 UROP Poster graphs and printing <br>
 
+Meeting Notes for 5/9 <br>
+Refer to Page 347 of Allen- Tildesley paper to pick the normal distribution number and use those equations to put in the velocity and position equations, let the mean be 0 initially <br>
+Try mean of previous position and velocity too <br>
+
