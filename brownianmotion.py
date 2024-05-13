@@ -95,11 +95,11 @@ def brownian_motion_simulation():
     print("sigma velocity", sigma_velocity)
     for time in range(1, total_time + 1):
         last_position = x_position
-        # last_velocity = velocity
+        last_velocity = velocity
 
         # calculating random sigma value for gaussian with previous position as mean and sigma_position as std dev twice for the
         # bivariate normal distribution
-        random_sigma_position_1 = np.random.normal(last_position, sigma_position)
+        random_sigma_position = np.random.normal(last_position, sigma_position)
         random_sigma_position_2 = np.random.normal(last_position, sigma_position)
         # equation to calculate new position using equation 5 in Hammer English paper
         # absolute value of random_sigma_position is taken because sigma(standard deviation) cannot be negative
@@ -112,17 +112,10 @@ def brownian_motion_simulation():
         x_position = x_position + (
             (c1 * time_interval * velocity)
             + (c2 * pow(time_interval, 2) * K)
-            + np.average(
-                np.random.multivariate_normal(
-                    mean=[last_position, last_position],
-                    cov=np.array(
-                        [
-                            [random_sigma_position_1**2, 0],
-                            [0, random_sigma_position_2**2],
-                        ]
-                    ),
-                )
-            )
+            + random.choices(
+                generate_normal_distribution_values(0, random_sigma_position),
+                k=1,
+            )[0]
         )
         # print(x_position)
         # calculating random sigma value for gaussian using last_velocity as mean and sigma_velocity as standard deviation twice for bivariate normal distribution
@@ -132,11 +125,12 @@ def brownian_motion_simulation():
         # equation to calculate new velocity using equation 5 in Hammer English paper
         # absolute value of random_sigma_velocity is taken because sigma(standard deviation) cannot be negative
         velocity = (
-            (c0 * velocity)  # removed prev velocity
+            (c0 * last_velocity)
             + (c1 * time_interval * K)
-            + np.random.normal(
-                velocity, sigma_velocity
-            )  # changed line from gaussian( #velocity, np.abs(random_sigma_velocity)
+            + random.choices(
+                generate_normal_distribution_values(0, random_sigma_velocity),
+                k=1,  # changed line from gaussian( #velocity, np.abs(random_sigma_velocity)
+            )[0]
         )
         # updating previous velocity to the new velocity
 
@@ -168,9 +162,6 @@ def brownian_motion_simulation():
         # calculate average velocity at that instant and add to the list to plot later
         average_velocity = np.mean(particle_velocity)
         average_particle_velocity.append(average_velocity)
-
-        # after appending set velocity to zero
-        velocity = 0
 
     # print(particle_positions)
     print(particle_velocity)
@@ -389,5 +380,25 @@ def linear_function(x, m, c):
     return m * x + c  # y = mx + c
 
 
+def generate_normal_distribution_values(mean, std_dev):
+
+    # following Box and Mullet 1958 method from page 347 of Allen - Tildesly paper
+    # generating uniform random values between 0 and 1
+    uniform_random_values = np.random.uniform(low=0.0, high=1.0, size=2)
+    # generating 2 independent normally distributed random numbers
+    normal_distribution_value1 = (-2 * math.log(uniform_random_values[0])) ** (
+        1 / 2
+    ) * math.cos(2 * math.pi * uniform_random_values[1])
+    normal_distribution_value2 = (-2 * math.log(uniform_random_values[0])) ** (
+        1 / 2
+    ) * math.sin(2 * math.pi * uniform_random_values[1])
+    # converting the normal distribution values of zero mean and unit variance to the desired mean and variance values
+    normal_distribution_value1 = mean + std_dev * normal_distribution_value1
+    normal_distribution_value2 = mean + std_dev * normal_distribution_value2
+
+    return [normal_distribution_value1, normal_distribution_value2]
+
+
 if __name__ == "__main__":
     brownian_motion_simulation()
+    # generate_normal_distribution_values(5, 3)
