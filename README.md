@@ -95,3 +95,6 @@ Meeting Notes for 5/9 <br>
 Refer to Page 347 of Allen- Tildesley paper to pick the normal distribution number and use those equations to put in the velocity and position equations, let the mean be 0 initially <br>
 Try mean of previous position and velocity too <br>
 
+Questions for 5/15 <br>
+Issues with normal distribution being previous position and velocity <br>
+Confirm understanding of box and muller method <br>
