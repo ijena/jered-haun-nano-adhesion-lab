@@ -109,11 +109,13 @@ def brownian_motion_simulation():
         #     + (c2 * pow(time_interval, 2) * K)
         #     + gaussian(last_position, np.abs(random_sigma_position))
         # )
-        x_position = x_position + (
+        x_position = last_position + (
             (c1 * time_interval * velocity)
             + (c2 * pow(time_interval, 2) * K)
             + random.choices(
-                generate_normal_distribution_values(0, random_sigma_position),
+                generate_normal_distribution_values(
+                    last_position, random_sigma_position
+                ),
                 k=1,
             )[0]
         )
@@ -121,14 +123,16 @@ def brownian_motion_simulation():
         # calculating random sigma value for gaussian using last_velocity as mean and sigma_velocity as standard deviation twice for bivariate normal distribution
         # CHANGE TO RANDOM_SIGMA_VELOCITY_1 FOR MULTIVARIATE NORMAL DISTRIBUTION
         random_sigma_velocity = np.random.normal(last_velocity, sigma_velocity)
-        random_sigma_velocity_2 = np.random.normal(last_velocity, sigma_velocity)
+        # random_sigma_velocity_2 = np.random.normal(last_velocity, sigma_velocity)
         # equation to calculate new velocity using equation 5 in Hammer English paper
         # absolute value of random_sigma_velocity is taken because sigma(standard deviation) cannot be negative
         velocity = (
             (c0 * last_velocity)
             + (c1 * time_interval * K)
             + random.choices(
-                generate_normal_distribution_values(0, random_sigma_velocity),
+                generate_normal_distribution_values(
+                    last_velocity, random_sigma_velocity
+                ),
                 k=1,  # changed line from gaussian( #velocity, np.abs(random_sigma_velocity)
             )[0]
         )
