@@ -98,3 +98,12 @@ Try mean of previous position and velocity too <br>
 Questions for 5/15 <br>
 Issues with normal distribution being previous position and velocity <br>
 Confirm understanding of box and muller method <br>
+
+Meeting notes for 5/23 <br>
+Remove unnecessary comments and code <br>
+Fix formatting <br>
+Delta t in sigma position and sigma velocity should be current time interval <br>
+Make a function that returns every value that is varying <br>
+In the loop just call that function <br>
+Remove random_sigma_position and random-sigma_velocity and just use sigma_position and sigma_velocity as the standard deviation as that gaussian distribution <br>
+Normal distribution mean should be at 500 for position and 0 for velocity (check midpoint) <br>
