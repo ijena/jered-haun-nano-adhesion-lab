@@ -57,12 +57,12 @@ def brownian_motion_simulation():
         random_sigma_position = np.random.normal(last_position, sigma_position)
         # equation to calculate new position using equation 5 in Hammer English paper
         # absolute value of random_sigma_position is taken because sigma(standard deviation) cannot be negative
-        x_position = last_position + ((c1 * time_interval * velocity)+ (c2 * pow(time_interval, 2) * K)+ random.choices(generate_normal_distribution_values(last_position, random_sigma_position), k=1,)[0])
+        x_position = last_position + ((c1 * time * velocity)+ (c2 * pow(time, 2) * K)+ random.choices(generate_normal_distribution_values(last_position, random_sigma_position), k=1,)[0])
         # calculating random sigma value for gaussian using last_velocity as mean and sigma_velocity as standard deviation twice for bivariate normal distribution
         random_sigma_velocity = np.random.normal(last_velocity, sigma_velocity)
         # equation to calculate new velocity using equation 5 in Hammer English paper
         # absolute value of random_sigma_velocity is taken because sigma(standard deviation) cannot be negative
-        velocity = ((c0 * last_velocity)+ (c1 * time_interval * K)+ random.choices(generate_normal_distribution_values(last_velocity, random_sigma_velocity), k=1,)[0]) # updating previous velocity to the new velocity
+        velocity = ((c0 * last_velocity)+ (c1 * time * K)+ random.choices(generate_normal_distribution_values(last_velocity, random_sigma_velocity), k=1,)[0]) # updating previous velocity to the new velocity
         # making sure the particle stays within bounds
         x_position = x_position % (upper_bound - lower_bound)
         particle_positions.append(x_position)
@@ -145,7 +145,7 @@ def brownian_motion_simulation():
             random_sigma_velocity = np.random.normal(10**index, sigma_velocity)
             # equation to calculate new velocity using equation 5 in Hammer English paper
             # absolute value of random_sigma_velocity is taken because sigma(standard deviation) cannot be negative
-            velocity = ((c0 * velocity)+ (c1 * time_interval * K)+ gaussian(last_velocity, np.abs(random_sigma_velocity)))
+            velocity = ((c0 * velocity)+ (c1 * time * K)+ gaussian(last_velocity, np.abs(random_sigma_velocity)))
             # calculate the slope at that instant of time and add it to the list current_cumulative_velocity_slope
             current_cumulative_velocity_slope.append(calculate_slope(time - 1, current_cumulative_velocity[-1], time, abs(velocity)))
             # add the cumulative  absolute velocity of the particle at every instant in current_cumulative_velocity
@@ -232,5 +232,7 @@ def generate_normal_distribution_values(mean, std_dev):
     return [normal_distribution_value1, normal_distribution_value2]
 
 
+def run_simulation (time, ):
+    pass
 if __name__ == "__main__":
     brownian_motion_simulation()
