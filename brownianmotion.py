@@ -39,30 +39,22 @@ def brownian_motion_simulation():
     c1 = (1 - c0) / (inverse_viscous_relaxation_time * time_interval)
     c2 = (1 - c1) / (inverse_viscous_relaxation_time * time_interval)
     K = 0  # K in equations is assumed to be 0 currently
-    # equation to calculate sigma_position using equation 6 in Hammer English paper
-    sigma_position = math.sqrt(pow(time_interval, 2) * ((boltzmann_constant * temperature) / particle_mass)* (2- (1/ inverse_viscous_relaxation_time * time_interval)* ( 3- 4 * math.exp(-inverse_viscous_relaxation_time * time_interval)+ math.exp(-2 * inverse_viscous_relaxation_time * time_interval))))
-    # equation to calculate sigma_velocity using velocity 6 in Hammer English paper
-    sigma_velocity = math.sqrt(((boltzmann_constant * temperature)* (1 - math.exp(-2 * inverse_viscous_relaxation_time)))/ particle_mass)
     last_position = 500
     last_velocity = 0  # CHANGED
     average_position = 0  # variable to store average position of the particle
     average_velocity = 0  # variable to store average velocity of the particle
-    print("sigma velocity", sigma_velocity)
     for time in range(1, total_time + 1):
         last_position = x_position
         last_velocity = velocity
 
-        # calculating random sigma value for gaussian with previous position as mean and sigma_position as std dev twice for the
-        # bivariate normal distribution
-        random_sigma_position = np.random.normal(last_position, sigma_position)
+        # equation to calculate sigma_position using equation 6 in Hammer English paper
+        sigma_position = math.sqrt(pow(time, 2) * ((boltzmann_constant * temperature) / particle_mass)* (2- (1/ inverse_viscous_relaxation_time * time)* ( 3- 4 * math.exp(-inverse_viscous_relaxation_time * time)+ math.exp(-2 * inverse_viscous_relaxation_time * time))))
         # equation to calculate new position using equation 5 in Hammer English paper
-        # absolute value of random_sigma_position is taken because sigma(standard deviation) cannot be negative
-        x_position = last_position + ((c1 * time * velocity)+ (c2 * pow(time, 2) * K)+ random.choices(generate_normal_distribution_values(last_position, random_sigma_position), k=1,)[0])
-        # calculating random sigma value for gaussian using last_velocity as mean and sigma_velocity as standard deviation twice for bivariate normal distribution
-        random_sigma_velocity = np.random.normal(last_velocity, sigma_velocity)
+        x_position = last_position + ((c1 * time * velocity)+ (c2 * pow(time, 2) * K)+ random.choices(generate_normal_distribution_values(last_position, sigma_position), k=1,)[0])
+        # equation to calculate sigma_velocity using velocity 6 in Hammer English paper
+        sigma_velocity = math.sqrt(((boltzmann_constant * temperature)* (1 - math.exp(-2 * inverse_viscous_relaxation_time)))/ particle_mass)
         # equation to calculate new velocity using equation 5 in Hammer English paper
-        # absolute value of random_sigma_velocity is taken because sigma(standard deviation) cannot be negative
-        velocity = ((c0 * last_velocity)+ (c1 * time * K)+ random.choices(generate_normal_distribution_values(last_velocity, random_sigma_velocity), k=1,)[0]) # updating previous velocity to the new velocity
+        velocity = ((c0 * last_velocity)+ (c1 * time * K)+ random.choices(generate_normal_distribution_values(last_velocity, sigma_velocity), k=1,)[0]) # updating previous velocity to the new velocity
         # making sure the particle stays within bounds
         x_position = x_position % (upper_bound - lower_bound)
         particle_positions.append(x_position)
