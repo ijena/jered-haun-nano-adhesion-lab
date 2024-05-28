@@ -11,11 +11,6 @@ from scipy.stats import multivariate_normal
 # calculate sigma using equation 6 from hammer english
 # use nanoseconds and nanometre
 
-# TO DO add error handling for inputs
-# def value_error_handling(user_input, data_type):
-#    try:
-
-
 def brownian_motion_simulation():
     line_length = 1000  # length of box in nanometre
 
@@ -47,10 +42,6 @@ def brownian_motion_simulation():
     # equation to calculate sigma_position using equation 6 in Hammer English paper
     sigma_position = math.sqrt(pow(time_interval, 2) * ((boltzmann_constant * temperature) / particle_mass)* (2- (1/ inverse_viscous_relaxation_time * time_interval)* ( 3- 4 * math.exp(-inverse_viscous_relaxation_time * time_interval)+ math.exp(-2 * inverse_viscous_relaxation_time * time_interval))))
     # equation to calculate sigma_velocity using velocity 6 in Hammer English paper
-    # sigma_velocity = math.sqrt(
-    #     ((inverse_viscous_relaxation_time * temperature) / particle_mass)
-    #     * (1 - math.exp(-2 * inverse_viscous_relaxation_time * time_interval))
-    # )
     sigma_velocity = math.sqrt(((boltzmann_constant * temperature)* (1 - math.exp(-2 * inverse_viscous_relaxation_time)))/ particle_mass)
     last_position = 500
     last_velocity = 0  # CHANGED
@@ -64,41 +55,14 @@ def brownian_motion_simulation():
         # calculating random sigma value for gaussian with previous position as mean and sigma_position as std dev twice for the
         # bivariate normal distribution
         random_sigma_position = np.random.normal(last_position, sigma_position)
-        random_sigma_position_2 = np.random.normal(last_position, sigma_position)
         # equation to calculate new position using equation 5 in Hammer English paper
         # absolute value of random_sigma_position is taken because sigma(standard deviation) cannot be negative
-
-        # x_position = x_position + (
-        #     (c1 * time_interval * velocity)
-        #     + (c2 * pow(time_interval, 2) * K)
-        #     + gaussian(last_position, np.abs(random_sigma_position))
-        # )
         x_position = last_position + ((c1 * time_interval * velocity)+ (c2 * pow(time_interval, 2) * K)+ random.choices(generate_normal_distribution_values(last_position, random_sigma_position), k=1,)[0])
-        # print(x_position)
         # calculating random sigma value for gaussian using last_velocity as mean and sigma_velocity as standard deviation twice for bivariate normal distribution
-        # CHANGE TO RANDOM_SIGMA_VELOCITY_1 FOR MULTIVARIATE NORMAL DISTRIBUTION
         random_sigma_velocity = np.random.normal(last_velocity, sigma_velocity)
-        # random_sigma_velocity_2 = np.random.normal(last_velocity, sigma_velocity)
         # equation to calculate new velocity using equation 5 in Hammer English paper
         # absolute value of random_sigma_velocity is taken because sigma(standard deviation) cannot be negative
         velocity = ((c0 * last_velocity)+ (c1 * time_interval * K)+ random.choices(generate_normal_distribution_values(last_velocity, random_sigma_velocity), k=1,)[0]) # updating previous velocity to the new velocity
-
-        # overflow error when I use bivariate distribution
-        # velocity = (
-        #     (c0 * velocity)
-        #     + (c1 * time_interval * K)
-        #     + np.average(
-        #         np.random.multivariate_normal(
-        #             mean=[last_velocity, last_velocity],
-        #             cov=np.array(
-        #                 [
-        #                     [random_sigma_velocity_1**2, 0],
-        #                     [0, random_sigma_velocity_2**2],
-        #                 ]
-        #             ),
-        #         )
-        #     )
-        # )
         # making sure the particle stays within bounds
         x_position = x_position % (upper_bound - lower_bound)
         particle_positions.append(x_position)
@@ -150,13 +114,6 @@ def brownian_motion_simulation():
 
     # Ideal slope = ndt where n is the number of dimensions, d = diffusion coefficient and t = temperature
     ideal_cumulative_absolute_position_slope = 1 * diffusion_coefficient * temperature
-    # print(1 * diffusion_coefficient * temperature)
-    # print("actual", cumulative_sum_position_slope)
-    # print("ideal", position_slope_analysis)
-    # print(slope_analysis)
-
-    # print(actual_cumulative_absolute_position_slope)
-
     # plotting what the ideal slope should be
     plt.axhline(y=ideal_cumulative_absolute_position_slope,label="Ideal Cumulative Absolute Position Slope",)
     # plotting with the actual slope is
@@ -221,14 +178,10 @@ def brownian_motion_simulation():
     # Calculate mean and standard deviations for plotting a normal distribution overlay
     mean_position = np.mean(particle_positions)
     position_std_dev = np.std(particle_positions)
-    # print("Mean", mean_position)
-    # print("Standard deviation", position_std_dev)
     # Create a list of all position values
     position_values = np.linspace(0, 1000)
     # Call the normal distribution on all position values
     position_normal_distribution = [normal_distribution(any_value, mean_position, position_std_dev)for any_value in position_values]
-    # print(position_values)
-    # print(position_normal_distribution)
     # Plotting Histogram of particle_positions
     plt.hist(particle_positions, bins=50, label="Positions")
     plt.plot(position_values,position_normal_distribution,label="Normal distribution overlay",)
@@ -267,7 +220,7 @@ def linear_function(x, m, c):
 
 def generate_normal_distribution_values(mean, std_dev):
 
-    # following Box and Mullet 1958 method from page 347 of Allen - Tildesly paper
+    # following Box and Muller 1958 method from page 347 of Allen - Tildesly paper
     # generating uniform random values between 0 and 1
     uniform_random_values = np.random.uniform(low=0.0, high=1.0, size=2)
     # generating 2 independent normally distributed random numbers
@@ -281,4 +234,3 @@ def generate_normal_distribution_values(mean, std_dev):
 
 if __name__ == "__main__":
     brownian_motion_simulation()
-    # generate_normal_distribution_values(5, 3)
