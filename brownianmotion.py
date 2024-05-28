@@ -34,10 +34,9 @@ def brownian_motion_simulation():
     boltzmann_constant = 1.380649 * pow(10, -11)  # boltzmann constant in (nm^2 * ng)/(ns^2 * K)
     temperature = 310.2  # average body temperature in Kelvin
     time_interval = 1  # time_interval is taken as 1 ns
-    
     K = 0  # K in equations is assumed to be 0 currently
     last_position = 500
-    last_velocity = 0  # CHANGED
+    last_velocity = 0
     average_position = 0  # variable to store average position of the particle
     average_velocity = 0  # variable to store average velocity of the particle
     for time in range(1, total_time + 1):
