@@ -34,10 +34,7 @@ def brownian_motion_simulation():
     boltzmann_constant = 1.380649 * pow(10, -11)  # boltzmann constant in (nm^2 * ng)/(ns^2 * K)
     temperature = 310.2  # average body temperature in Kelvin
     time_interval = 1  # time_interval is taken as 1 ns
-    # constants c0,c1 and c2 from equation 5 in Hammer English paper
-    c0 = math.exp(-inverse_viscous_relaxation_time * time_interval)
-    c1 = (1 - c0) / (inverse_viscous_relaxation_time * time_interval)
-    c2 = (1 - c1) / (inverse_viscous_relaxation_time * time_interval)
+    
     K = 0  # K in equations is assumed to be 0 currently
     last_position = 500
     last_velocity = 0  # CHANGED
@@ -46,15 +43,18 @@ def brownian_motion_simulation():
     for time in range(1, total_time + 1):
         last_position = x_position
         last_velocity = velocity
-
+        # constants c0,c1 and c2 from equation 5 in Hammer English paper
+        c0 = math.exp(-inverse_viscous_relaxation_time * time)
+        c1 = (1 - c0) / (inverse_viscous_relaxation_time * time)
+        c2 = (1 - c1) / (inverse_viscous_relaxation_time * time)
         # equation to calculate sigma_position using equation 6 in Hammer English paper
         sigma_position = math.sqrt(pow(time, 2) * ((boltzmann_constant * temperature) / particle_mass)* (2- (1/ inverse_viscous_relaxation_time * time)* ( 3- 4 * math.exp(-inverse_viscous_relaxation_time * time)+ math.exp(-2 * inverse_viscous_relaxation_time * time))))
         # equation to calculate new position using equation 5 in Hammer English paper
-        x_position = last_position + ((c1 * time * velocity)+ (c2 * pow(time, 2) * K)+ random.choices(generate_normal_distribution_values(last_position, sigma_position), k=1,)[0])
+        x_position = last_position + ((c1 * time * velocity)+ (c2 * pow(time, 2) * K)+ random.choices(generate_normal_distribution_values(500, sigma_position), k=1,)[0])
         # equation to calculate sigma_velocity using velocity 6 in Hammer English paper
         sigma_velocity = math.sqrt(((boltzmann_constant * temperature)* (1 - math.exp(-2 * inverse_viscous_relaxation_time)))/ particle_mass)
         # equation to calculate new velocity using equation 5 in Hammer English paper
-        velocity = ((c0 * last_velocity)+ (c1 * time * K)+ random.choices(generate_normal_distribution_values(last_velocity, sigma_velocity), k=1,)[0]) # updating previous velocity to the new velocity
+        velocity = ((c0 * last_velocity)+ (c1 * time * K)+ random.choices(generate_normal_distribution_values(0, sigma_velocity), k=1,)[0]) # updating previous velocity to the new velocity
         # making sure the particle stays within bounds
         x_position = x_position % (upper_bound - lower_bound)
         particle_positions.append(x_position)
