@@ -63,6 +63,39 @@ def brownian_motion_simulation():
     plt.legend()
     plt.title(f"Position vs Time for Brownian Motion on a {line_length} nm Line")
     plt.show()
+    
+    # Plotting particle velocity vs time
+    plt.plot(particle_time, average_particle_velocity, label="Average velocity")
+    plt.plot(particle_time, particle_velocity, label="Velocity")
+    plt.ylabel("Velocity (nm/s)")
+    plt.xlabel("Time (ns)")
+    plt.legend()
+    plt.title(f"Velocity vs Time for Brownian Motion on a {line_length} nm Line")
+    plt.show()
+    
+    # Calculate mean and standard deviations for plotting a normal distribution overlay
+    mean_position = np.mean(particle_positions)
+    position_std_dev = np.std(particle_positions)
+    # Create a list of all position values
+    position_values = np.linspace(0, 1000)
+    # Call the normal distribution on all position values
+    position_normal_distribution = [normal_distribution(any_value, mean_position, position_std_dev)for any_value in position_values]
+    #Plotting Histogram of particle_positions
+    plt.hist(particle_positions, bins=50, label="Positions")
+    plt.plot(position_values,position_normal_distribution,label="Normal distribution overlay",)
+    plt.ylabel("Frequency")
+    plt.xlabel("Position(nm)")
+    plt.title(f"Histogram for particle position in Brownian Motion on a {line_length} nm Line")
+    plt.legend()
+    plt.show()
+
+    # Plotting Histogram of particle_velocities
+    plt.hist(particle_velocity, label="Velocity", color="orange")
+    plt.ylabel("Frequency")
+    plt.xlabel("Velocity (nm/s)")
+    plt.title(f"Histogram for particle velocity in Brownian Motion on a {line_length} nm Line")
+    plt.legend()
+    plt.show()
     # # finding the sum of absolute positions at each second to analyze the position-time graph
     # particle_position_analysis = [abs(particle_positions[0])]
     # # calculate the cumulative sum of absolute positions and store it in particle_position_analysis
@@ -98,14 +131,6 @@ def brownian_motion_simulation():
     # plt.title("Ideal vs Real slope of the graph of cumulative sum of absolute positions of the particle at every instant")
     # plt.legend()
     # plt.show()
-    # Plotting particle velocity vs time
-    plt.plot(particle_time, average_particle_velocity, label="Average velocity")
-    plt.plot(particle_time, particle_velocity, label="Velocity")
-    plt.ylabel("Velocity (nm/s)")
-    plt.xlabel("Time (ns)")
-    plt.legend()
-    plt.title(f"Velocity vs Time for Brownian Motion on a {line_length} nm Line")
-    plt.show()
 
     # velocity_analysis = ([])  # list to store all the cumulative particle velocities for mean velocities from 10^1 to 10^10
     # cumulative_sum_velocity_slope = ([])  # list to store the slope for all the cumulative sum of absolute velocity graphs
@@ -151,30 +176,25 @@ def brownian_motion_simulation():
     # plt.title("Actual and ideal values of slopes of cumulative absolute velocity distributions")
     # plt.legend()
     # plt.show()
-    # Calculate mean and standard deviations for plotting a normal distribution overlay
-    mean_position = np.mean(particle_positions)
-    position_std_dev = np.std(particle_positions)
-    # Create a list of all position values
-    position_values = np.linspace(0, 1000)
-    # Call the normal distribution on all position values
-    position_normal_distribution = [normal_distribution(any_value, mean_position, position_std_dev)for any_value in position_values]
-    #Plotting Histogram of particle_positions
-    plt.hist(particle_positions, bins=50, label="Positions")
-    plt.plot(position_values,position_normal_distribution,label="Normal distribution overlay",)
-    plt.ylabel("Frequency")
-    plt.xlabel("Position(nm)")
-    plt.title(f"Histogram for particle position in Brownian Motion on a {line_length} nm Line")
-    plt.legend()
-    plt.show()
+    
 
-    # Plotting Histogram of particle_velocities
-    plt.hist(particle_velocity, label="Velocity", color="orange")
-    plt.ylabel("Frequency")
-    plt.xlabel("Velocity (nm/s)")
-    plt.title(f"Histogram for particle velocity in Brownian Motion on a {line_length} nm Line")
-    plt.legend()
-    plt.show()
-
+def run_simulation (time, inverse_viscous_relaxation_time, boltzmann_constant, temperature, particle_mass, last_position, last_velocity, K=0):
+    # constants c0,c1 and c2 from equation 5 in Hammer English paper
+    c0 = math.exp(-inverse_viscous_relaxation_time * time)
+    c1 = (1 - c0) / (inverse_viscous_relaxation_time * time)
+    c2 = (1 - c1) / (inverse_viscous_relaxation_time * time) 
+    # equation to calculate sigma_velocity using velocity 6 in Hammer English paper
+    sigma_velocity = math.sqrt(((boltzmann_constant * temperature)* (1 - math.exp(-2 * inverse_viscous_relaxation_time * time)))/ particle_mass)
+    # print(math.exp(-2 * time * inverse_viscous_relaxation_time))
+    # print(sigma_velocity)
+    # equation to calculate new velocity using equation 5 in Hammer English paper
+    velocity = ((c0 * last_velocity)+ (c1 * time * K) )+random.choices(generate_normal_distribution_values(0, sigma_velocity), k=1,)[0]# updating previous velocity to the new velocity
+    # equation to calculate sigma_position using equation 6 in Hammer English paper
+    sigma_position = math.sqrt(pow(time, 2) * ((boltzmann_constant * temperature) / particle_mass)* (1/(inverse_viscous_relaxation_time * time))*(2- (1/ inverse_viscous_relaxation_time * time)* ( 3- 4 * math.exp(-inverse_viscous_relaxation_time * time)+ math.exp(-2 * inverse_viscous_relaxation_time * time))))
+    # print(sigma_position)
+    # equation to calculate new position using equation 5 in Hammer English paper
+    x_position = last_position + ((c1 * time * velocity)+ (c2 * pow(time, 2) * K)+ random.choices(generate_normal_distribution_values(500, sigma_position), k=1,)[0])
+    return x_position, velocity
 
 def gaussian(last_position, sigma):
     # generate a value in a gaussian distribution based on the mean being the previous position/velocity
@@ -206,22 +226,6 @@ def generate_normal_distribution_values(mean, std_dev):
     normal_distribution_value1 = mean + std_dev * normal_distribution_value1
     normal_distribution_value2 = mean + std_dev * normal_distribution_value2
     return [normal_distribution_value1, normal_distribution_value2]
-
-
-def run_simulation (time, inverse_viscous_relaxation_time, boltzmann_constant, temperature, particle_mass, last_position, last_velocity, K=0):
-    # constants c0,c1 and c2 from equation 5 in Hammer English paper
-    c0 = math.exp(-inverse_viscous_relaxation_time * time)
-    c1 = (1 - c0) / (inverse_viscous_relaxation_time * time)
-    c2 = (1 - c1) / (inverse_viscous_relaxation_time * time) 
-    # equation to calculate sigma_velocity using velocity 6 in Hammer English paper
-    sigma_velocity = math.sqrt(((boltzmann_constant * temperature)* (1 - math.exp(-2 * inverse_viscous_relaxation_time)))/ particle_mass)
-    # equation to calculate new velocity using equation 5 in Hammer English paper
-    velocity = ((c0 * last_velocity)+ (c1 * time * K) )+random.choices(generate_normal_distribution_values(0, sigma_velocity), k=1,)[0]# updating previous velocity to the new velocity
-    # equation to calculate sigma_position using equation 6 in Hammer English paper
-    sigma_position = math.sqrt(pow(time, 2) * ((boltzmann_constant * temperature) / particle_mass)* (2- (1/ inverse_viscous_relaxation_time * time)* ( 3- 4 * math.exp(-inverse_viscous_relaxation_time * time)+ math.exp(-2 * inverse_viscous_relaxation_time * time))))
-    # equation to calculate new position using equation 5 in Hammer English paper
-    x_position = last_position + ((c1 * time * velocity)+ (c2 * pow(time, 2) * K)+ random.choices(generate_normal_distribution_values(500, sigma_position), k=1,)[0])
-    return x_position, velocity
 if __name__ == "__main__":
     brownian_motion_simulation()
     
