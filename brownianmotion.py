@@ -11,12 +11,12 @@ from scipy.optimize import curve_fit  # used to calculate slope
 
 def brownian_motion_simulation():
     line_length = 1000  # length of box in nanometre
-
     x_position = 500  # initial position of the particle at midpoint of the line which is at the 500 nm
-    velocity = 0  # initial velocity of the particle is assumed to be 0 nm/ns CHANGED
+    velocity = 0  # initial velocity of the particle is assumed to be 0 nm/ns 
     total_time = 1000  # time of simulation in nanoseconds
     particle_radius = 100  # particle_radius in nanometre
-    particle_mass = (1.05 * pow(10,12)) * ((4.0/3.0) * math.pi * pow(particle_radius,3))
+    particle_mass = (1.05 * pow(10,12)) * ((4.0/3.0) * math.pi * pow(particle_radius,3)) #error in mass values, pow should be -12
+    print(particle_mass)
     # mass = density * volume of polysterene. density is in nanogram/nm^3 and volume is in nm^3
     # lower_bound and upper_bound refer to the endpoints of the box
     lower_bound = 0
@@ -26,12 +26,10 @@ def brownian_motion_simulation():
     particle_time = [0]  # particle_time is created to store the time passed since start of simulation. 0ns is the start of the simulation
     average_particle_position = [x_position]  # create a list to store the average particle position at every instant
     average_particle_velocity = [velocity]  # create a list to store the average particle velocity at every instant
-    # check unit conversion
-    viscosity_liquid = 1 / pow(10, 18)  # viscosity of water in ng/(nm.ns)
+    viscosity_liquid = 1 / pow(10, 6)  # viscosity of water in ng/(nm.ns)
     inverse_viscous_relaxation_time = (3 * math.pi * viscosity_liquid * 2 * particle_radius) / particle_mass  # calculating inverse viscous relaxation time using equation 4 from Hammer- English paper
     boltzmann_constant = 1.380649 * pow(10, -11)  # boltzmann constant in (nm^2 * ng)/(ns^2 * K)
     temperature = 310.2  # average body temperature in Kelvin
-    time_interval = 1  # time_interval is taken as 1 ns
     K = 0  # K in equations is assumed to be 0 currently
     last_position = 500
     last_velocity = 0
@@ -65,41 +63,41 @@ def brownian_motion_simulation():
     plt.legend()
     plt.title(f"Position vs Time for Brownian Motion on a {line_length} nm Line")
     plt.show()
-    # finding the sum of absolute positions at each second to analyze the position-time graph
-    particle_position_analysis = [abs(particle_positions[0])]
-    # calculate the cumulative sum of absolute positions and store it in particle_position_analysis
-    for time in range(1, total_time + 1):
-        particle_position_analysis.append(particle_position_analysis[time - 1] + abs(particle_positions[time]))
-    # plotting cumulative sum of absolute positions  with respect to time
-    plt.plot(particle_time,particle_position_analysis,label="Cumulative sum of absolute positions",)
-    plt.ylabel("Cumulative position (nm)")
-    plt.xlabel("Time(ns)")
-    plt.legend()
-    plt.title("Cumulative sum of absolute positions at each instance of time")
-    plt.show()
+    # # finding the sum of absolute positions at each second to analyze the position-time graph
+    # particle_position_analysis = [abs(particle_positions[0])]
+    # # calculate the cumulative sum of absolute positions and store it in particle_position_analysis
+    # for time in range(1, total_time + 1):
+    #     particle_position_analysis.append(particle_position_analysis[time - 1] + abs(particle_positions[time]))
+    # # plotting cumulative sum of absolute positions  with respect to time
+    # plt.plot(particle_time,particle_position_analysis,label="Cumulative sum of absolute positions",)
+    # plt.ylabel("Cumulative position (nm)")
+    # plt.xlabel("Time(ns)")
+    # plt.legend()
+    # plt.title("Cumulative sum of absolute positions at each instance of time")
+    # plt.show()
 
-    # calculate slope of the cumulative sum of absolute positions using scipy.optimize.curve_fit
-    # popt are the optimal parameters and pcov is the covariance
-    # linear function is a user defined function that returns y = mx +c
-    popt, pcov = curve_fit(linear_function, particle_time, particle_position_analysis)
-    actual_cumulative_absolute_position_slope = popt[0]
+    # # calculate slope of the cumulative sum of absolute positions using scipy.optimize.curve_fit
+    # # popt are the optimal parameters and pcov is the covariance
+    # # linear function is a user defined function that returns y = mx +c
+    # popt, pcov = curve_fit(linear_function, particle_time, particle_position_analysis)
+    # actual_cumulative_absolute_position_slope = popt[0]
 
-    # print(cumulative_sum_position_slope)
-    # now we have to check if the slope = ndt where n is the number of dimensions, d is the diffusion coefficient and t is the emperature
-    # Using Stokes-Einstein-Sutherland equation to find the diffusion coefficient https://en.wikipedia.org/wiki/Einstein_relation_(kinetic_theory)
-    diffusion_coefficient = (boltzmann_constant * temperature) / (6 * math.pi * viscosity_liquid * particle_radius)
-    print("Diffusion coefficient", diffusion_coefficient)
+    # # print(cumulative_sum_position_slope)
+    # # now we have to check if the slope = ndt where n is the number of dimensions, d is the diffusion coefficient and t is the emperature
+    # # Using Stokes-Einstein-Sutherland equation to find the diffusion coefficient https://en.wikipedia.org/wiki/Einstein_relation_(kinetic_theory)
+    # diffusion_coefficient = (boltzmann_constant * temperature) / (6 * math.pi * viscosity_liquid * particle_radius)
+    # print("Diffusion coefficient", diffusion_coefficient)
 
-    # Ideal slope = ndt where n is the number of dimensions, d = diffusion coefficient and t = temperature
-    ideal_cumulative_absolute_position_slope = 1 * diffusion_coefficient * temperature
-    # plotting what the ideal slope should be
-    plt.axhline(y=ideal_cumulative_absolute_position_slope,label="Ideal Cumulative Absolute Position Slope",)
-    # plotting with the actual slope is
-    plt.axhline(y=actual_cumulative_absolute_position_slope,label="Actual Cumulative Absolute Position Slope",color="red",)
-    plt.ylabel("Slope(nm/ns)")
-    plt.title("Ideal vs Real slope of the graph of cumulative sum of absolute positions of the particle at every instant")
-    plt.legend()
-    plt.show()
+    # # Ideal slope = ndt where n is the number of dimensions, d = diffusion coefficient and t = temperature
+    # ideal_cumulative_absolute_position_slope = 1 * diffusion_coefficient * temperature
+    # # plotting what the ideal slope should be
+    # plt.axhline(y=ideal_cumulative_absolute_position_slope,label="Ideal Cumulative Absolute Position Slope",)
+    # # plotting with the actual slope is
+    # plt.axhline(y=actual_cumulative_absolute_position_slope,label="Actual Cumulative Absolute Position Slope",color="red",)
+    # plt.ylabel("Slope(nm/ns)")
+    # plt.title("Ideal vs Real slope of the graph of cumulative sum of absolute positions of the particle at every instant")
+    # plt.legend()
+    # plt.show()
     # Plotting particle velocity vs time
     plt.plot(particle_time, average_particle_velocity, label="Average velocity")
     plt.plot(particle_time, particle_velocity, label="Velocity")
@@ -109,50 +107,50 @@ def brownian_motion_simulation():
     plt.title(f"Velocity vs Time for Brownian Motion on a {line_length} nm Line")
     plt.show()
 
-    velocity_analysis = ([])  # list to store all the cumulative particle velocities for mean velocities from 10^1 to 10^10
-    cumulative_sum_velocity_slope = ([])  # list to store the slope for all the cumulative sum of absolute velocity graphs
-    for index in range(1, 11):
-        velocity = 0  # set initial velocity to 0
-        current_cumulative_velocity = [0]
-        current_cumulative_velocity_slope = [0]  # list to store the slope at every instant for a particular mean in the gaussian distribution
-        # list to append cumulative velocity for that  particular mean
-        for time in range(1, total_time + 1):
-            # calculate velocity at every instant for the different means
-            last_velocity = velocity
+    # velocity_analysis = ([])  # list to store all the cumulative particle velocities for mean velocities from 10^1 to 10^10
+    # cumulative_sum_velocity_slope = ([])  # list to store the slope for all the cumulative sum of absolute velocity graphs
+    # for index in range(1, 11):
+    #     velocity = 0  # set initial velocity to 0
+    #     current_cumulative_velocity = [0]
+    #     current_cumulative_velocity_slope = [0]  # list to store the slope at every instant for a particular mean in the gaussian distribution
+    #     # list to append cumulative velocity for that  particular mean
+    #     for time in range(1, total_time + 1):
+    #         # calculate velocity at every instant for the different means
+    #         last_velocity = velocity
 
-            random_sigma_velocity = np.random.normal(10**index, sigma_velocity)
-            # equation to calculate new velocity using equation 5 in Hammer English paper
-            # absolute value of random_sigma_velocity is taken because sigma(standard deviation) cannot be negative
-            velocity = ((c0 * velocity)+ (c1 * time * K)+ gaussian(last_velocity, np.abs(random_sigma_velocity)))
-            # calculate the slope at that instant of time and add it to the list current_cumulative_velocity_slope
-            current_cumulative_velocity_slope.append(calculate_slope(time - 1, current_cumulative_velocity[-1], time, abs(velocity)))
-            # add the cumulative  absolute velocity of the particle at every instant in current_cumulative_velocity
-            # add the previous cumulative velocity and the current cumulative velocity to find the new cumulative velocity
+    #         random_sigma_velocity = np.random.normal(10**index, sigma_velocity)
+    #         # equation to calculate new velocity using equation 5 in Hammer English paper
+    #         # absolute value of random_sigma_velocity is taken because sigma(standard deviation) cannot be negative
+    #         velocity = ((c0 * velocity)+ (c1 * time * K)+ gaussian(last_velocity, np.abs(random_sigma_velocity)))
+    #         # calculate the slope at that instant of time and add it to the list current_cumulative_velocity_slope
+    #         current_cumulative_velocity_slope.append(calculate_slope(time - 1, current_cumulative_velocity[-1], time, abs(velocity)))
+    #         # add the cumulative  absolute velocity of the particle at every instant in current_cumulative_velocity
+    #         # add the previous cumulative velocity and the current cumulative velocity to find the new cumulative velocity
 
-            current_cumulative_velocity.append(current_cumulative_velocity[-1] + abs(velocity))
-        # save the current_cumulative_velocity for that particular mean velocity in velocity_analysis
-        velocity_analysis.append(current_cumulative_velocity)
-        # print(current_cumulative_velocity_slope)
-        cumulative_sum_velocity_slope.append(current_cumulative_velocity_slope)
+    #         current_cumulative_velocity.append(current_cumulative_velocity[-1] + abs(velocity))
+    #     # save the current_cumulative_velocity for that particular mean velocity in velocity_analysis
+    #     velocity_analysis.append(current_cumulative_velocity)
+    #     # print(current_cumulative_velocity_slope)
+    #     cumulative_sum_velocity_slope.append(current_cumulative_velocity_slope)
 
-    # plotting graphs of the velocity analysis
-    # ERROR Watch, anything over this range cannot be plotted, is it because of infinite values?
-    for index in range(0, 5):
-        plt.plot(particle_time,velocity_analysis[index],label=f"Mean = 10 ^{index+1} nm/ns ",)
-    plt.ylabel("Velocity(nm/ns)")
-    plt.xlabel("Time (ns)")
-    plt.title("Cumulative velocity of particles with different means of the gaussian distribution ")
-    plt.legend()
-    plt.show()
+    # # plotting graphs of the velocity analysis
+    # # ERROR Watch, anything over this range cannot be plotted, is it because of infinite values?
+    # for index in range(0, 5):
+    #     plt.plot(particle_time,velocity_analysis[index],label=f"Mean = 10 ^{index+1} nm/ns ",)
+    # plt.ylabel("Velocity(nm/ns)")
+    # plt.xlabel("Time (ns)")
+    # plt.title("Cumulative velocity of particles with different means of the gaussian distribution ")
+    # plt.legend()
+    # plt.show()
 
-    # plot the actual and ideal slopes for velocity analysis
-    for index in range(0, 10):
-        plt.plot(particle_time,cumulative_sum_velocity_slope[index],label=f"Actual slope for mean = 10^{index+1} nm/ns",)
-    plt.ylabel("Values of the slope (nm/ns)")
-    plt.xlabel("Time (ns)")
-    plt.title("Actual and ideal values of slopes of cumulative absolute velocity distributions")
-    plt.legend()
-    plt.show()
+    # # plot the actual and ideal slopes for velocity analysis
+    # for index in range(0, 10):
+    #     plt.plot(particle_time,cumulative_sum_velocity_slope[index],label=f"Actual slope for mean = 10^{index+1} nm/ns",)
+    # plt.ylabel("Values of the slope (nm/ns)")
+    # plt.xlabel("Time (ns)")
+    # plt.title("Actual and ideal values of slopes of cumulative absolute velocity distributions")
+    # plt.legend()
+    # plt.show()
     # Calculate mean and standard deviations for plotting a normal distribution overlay
     mean_position = np.mean(particle_positions)
     position_std_dev = np.std(particle_positions)
@@ -160,7 +158,7 @@ def brownian_motion_simulation():
     position_values = np.linspace(0, 1000)
     # Call the normal distribution on all position values
     position_normal_distribution = [normal_distribution(any_value, mean_position, position_std_dev)for any_value in position_values]
-    # Plotting Histogram of particle_positions
+    #Plotting Histogram of particle_positions
     plt.hist(particle_positions, bins=50, label="Positions")
     plt.plot(position_values,position_normal_distribution,label="Normal distribution overlay",)
     plt.ylabel("Frequency")
