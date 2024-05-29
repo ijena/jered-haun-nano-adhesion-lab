@@ -107,3 +107,6 @@ Make a function that returns every value that is varying <br>
 In the loop just call that function <br>
 Remove random_sigma_position and random-sigma_velocity and just use sigma_position and sigma_velocity as the standard deviation as that gaussian distribution <br>
 Normal distribution mean should be at 500 for position and 0 for velocity (check midpoint) <br>
+
+Questions for 5/30 Meeting <br>
+Particle mass should include a -12 I believe but it leads to math domain error <br>
