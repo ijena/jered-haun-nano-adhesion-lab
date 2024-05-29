@@ -110,3 +110,6 @@ Normal distribution mean should be at 500 for position and 0 for velocity (check
 
 Questions for 5/30 Meeting <br>
 Particle mass should include a -12 I believe but it leads to math domain error <br>
+Should c0, c1 and c2 also vary with time? <br>
+c0,c1 and c2 are constant values because inverse viscous relaxation time and is way too small compared to time <br>
+Sigma velocity is 0 because of the e term with inverse viscous relaxation time * time <br>
