@@ -2,9 +2,7 @@ import matplotlib.pyplot as plt
 import math
 import random
 import numpy as np
-from scipy.stats import norm
 from scipy.optimize import curve_fit  # used to calculate slope
-from scipy.stats import multivariate_normal
 
 # for plots, plot position vs time and velocity vs time, around x = 0 or v = 0 ( 0 as in initial position which is middle of the box)
 # histograms of velocity and position which should look like a normal distribution
