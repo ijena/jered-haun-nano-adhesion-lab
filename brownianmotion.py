@@ -40,20 +40,9 @@ def brownian_motion_simulation():
     average_position = 0  # variable to store average position of the particle
     average_velocity = 0  # variable to store average velocity of the particle
     for time in range(1, total_time + 1):
+        x_position, velocity = run_simulation(time, inverse_viscous_relaxation_time, boltzmann_constant, temperature, particle_mass,last_position, last_velocity )
         last_position = x_position
         last_velocity = velocity
-        # constants c0,c1 and c2 from equation 5 in Hammer English paper
-        c0 = math.exp(-inverse_viscous_relaxation_time * time)
-        c1 = (1 - c0) / (inverse_viscous_relaxation_time * time)
-        c2 = (1 - c1) / (inverse_viscous_relaxation_time * time)
-        # equation to calculate sigma_position using equation 6 in Hammer English paper
-        sigma_position = math.sqrt(pow(time, 2) * ((boltzmann_constant * temperature) / particle_mass)* (2- (1/ inverse_viscous_relaxation_time * time)* ( 3- 4 * math.exp(-inverse_viscous_relaxation_time * time)+ math.exp(-2 * inverse_viscous_relaxation_time * time))))
-        # equation to calculate new position using equation 5 in Hammer English paper
-        x_position = last_position + ((c1 * time * velocity)+ (c2 * pow(time, 2) * K)+ random.choices(generate_normal_distribution_values(500, sigma_position), k=1,)[0])
-        # equation to calculate sigma_velocity using velocity 6 in Hammer English paper
-        sigma_velocity = math.sqrt(((boltzmann_constant * temperature)* (1 - math.exp(-2 * inverse_viscous_relaxation_time)))/ particle_mass)
-        # equation to calculate new velocity using equation 5 in Hammer English paper
-        velocity = ((c0 * last_velocity)+ (c1 * time * K)+ random.choices(generate_normal_distribution_values(0, sigma_velocity), k=1,)[0]) # updating previous velocity to the new velocity
         # making sure the particle stays within bounds
         x_position = x_position % (upper_bound - lower_bound)
         particle_positions.append(x_position)
@@ -68,8 +57,8 @@ def brownian_motion_simulation():
         average_particle_velocity.append(average_velocity)
 
     # print(particle_positions)
-    print(particle_velocity)
-    print("c0 ", c0)
+    #print(particle_velocity)
+    #print("c0 ", c0)
     plt.scatter(particle_time, particle_positions, label="Position")
     plt.plot(particle_time, average_particle_position, label="Average position", color="red")
 
@@ -223,7 +212,20 @@ def generate_normal_distribution_values(mean, std_dev):
     return [normal_distribution_value1, normal_distribution_value2]
 
 
-def run_simulation (time, ):
-    pass
+def run_simulation (time, inverse_viscous_relaxation_time, boltzmann_constant, temperature, particle_mass, last_position, last_velocity, K=0):
+    # constants c0,c1 and c2 from equation 5 in Hammer English paper
+    c0 = math.exp(-inverse_viscous_relaxation_time * time)
+    c1 = (1 - c0) / (inverse_viscous_relaxation_time * time)
+    c2 = (1 - c1) / (inverse_viscous_relaxation_time * time) 
+    # equation to calculate sigma_velocity using velocity 6 in Hammer English paper
+    sigma_velocity = math.sqrt(((boltzmann_constant * temperature)* (1 - math.exp(-2 * inverse_viscous_relaxation_time)))/ particle_mass)
+    # equation to calculate new velocity using equation 5 in Hammer English paper
+    velocity = ((c0 * last_velocity)+ (c1 * time * K) )+random.choices(generate_normal_distribution_values(0, sigma_velocity), k=1,)[0]# updating previous velocity to the new velocity
+    # equation to calculate sigma_position using equation 6 in Hammer English paper
+    sigma_position = math.sqrt(pow(time, 2) * ((boltzmann_constant * temperature) / particle_mass)* (2- (1/ inverse_viscous_relaxation_time * time)* ( 3- 4 * math.exp(-inverse_viscous_relaxation_time * time)+ math.exp(-2 * inverse_viscous_relaxation_time * time))))
+    # equation to calculate new position using equation 5 in Hammer English paper
+    x_position = last_position + ((c1 * time * velocity)+ (c2 * pow(time, 2) * K)+ random.choices(generate_normal_distribution_values(500, sigma_position), k=1,)[0])
+    return x_position, velocity
 if __name__ == "__main__":
     brownian_motion_simulation()
+    
