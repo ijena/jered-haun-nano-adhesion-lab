@@ -15,8 +15,8 @@ def brownian_motion_simulation():
     velocity = 0  # initial velocity of the particle is assumed to be 0 nm/ns 
     total_time = 1000  # time of simulation in nanoseconds
     particle_radius = 100  # particle_radius in nanometre
-    particle_mass = (1.05 * pow(10,12)) * ((4.0/3.0) * math.pi * pow(particle_radius,3)) #error in mass values, pow should be -12
-    print(particle_mass)
+    particle_mass =  ((4.0/3.0) * math.pi * pow(particle_radius,3)) #error in mass values, pow should be -12
+    #print(particle_mass)
     # mass = density * volume of polysterene. density is in nanogram/nm^3 and volume is in nm^3
     # lower_bound and upper_bound refer to the endpoints of the box
     lower_bound = 0
@@ -184,16 +184,25 @@ def run_simulation (time, inverse_viscous_relaxation_time, boltzmann_constant, t
     c1 = (1 - c0) / (inverse_viscous_relaxation_time * time)
     c2 = (1 - c1) / (inverse_viscous_relaxation_time * time) 
     # equation to calculate sigma_velocity using velocity 6 in Hammer English paper
+    sigma_position = math.sqrt(pow(time, 2) * ((boltzmann_constant * temperature) / particle_mass)* (1/(inverse_viscous_relaxation_time * time))*(2- (1/ inverse_viscous_relaxation_time * time)* ( 3- 4 * math.exp(-inverse_viscous_relaxation_time * time)+ math.exp(-2 * inverse_viscous_relaxation_time * time))))
+    sigma_position = time ** 2 * (boltzmann_constant * temperature ) / particle_mass * 1/ (inverse_viscous_relaxation_time * time) * (2 - (3 - 4 * math.exp(-inverse_viscous_relaxation_time *time))/ (inverse_viscous_relaxation_time *time)) + math.exp(- 2 * time * inverse_viscous_relaxation_time)
     sigma_velocity = math.sqrt(((boltzmann_constant * temperature)* (1 - math.exp(-2 * inverse_viscous_relaxation_time * time)))/ particle_mass)
+    print(sigma_velocity)
+    cc = time*boltzmann_constant*temperature*(1-math.exp(inverse_viscous_relaxation_time*time))**2/inverse_viscous_relaxation_time*time*math.sqrt(sigma_position*sigma_velocity)
+
+    randomx = np.random.normal(500,sigma_position)
+    randomv = np.random.normal(randomx*cc*math.sqrt(sigma_position/sigma_velocity),math.sqrt(sigma_velocity*(1-cc**2)))
+    
+   
+    
     # print(math.exp(-2 * time * inverse_viscous_relaxation_time))
     # print(sigma_velocity)
     # equation to calculate new velocity using equation 5 in Hammer English paper
-    velocity = ((c0 * last_velocity)+ (c1 * time * K) )+random.choices(generate_normal_distribution_values(0, sigma_velocity), k=1,)[0]# updating previous velocity to the new velocity
+    velocity = ((c0 * last_velocity)+ (c1 * time * K) ) + randomv# +random.choices(generate_normal_distribution_values(0, sigma_velocity), k=1,)[0]# updating previous velocity to the new velocity
     # equation to calculate sigma_position using equation 6 in Hammer English paper
-    sigma_position = math.sqrt(pow(time, 2) * ((boltzmann_constant * temperature) / particle_mass)* (1/(inverse_viscous_relaxation_time * time))*(2- (1/ inverse_viscous_relaxation_time * time)* ( 3- 4 * math.exp(-inverse_viscous_relaxation_time * time)+ math.exp(-2 * inverse_viscous_relaxation_time * time))))
     # print(sigma_position)
     # equation to calculate new position using equation 5 in Hammer English paper
-    x_position = last_position + ((c1 * time * velocity)+ (c2 * pow(time, 2) * K)+ random.choices(generate_normal_distribution_values(500, sigma_position), k=1,)[0])
+    x_position = last_position + ((c1 * time * velocity)+ (c2 * pow(time, 2) * K)+ randomx) #random.choices(generate_normal_distribution_values(500, sigma_position), k=1,)[0])
     return x_position, velocity
 
 def gaussian(last_position, sigma):
